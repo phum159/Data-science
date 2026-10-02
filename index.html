@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ติวสอบ Final · Data Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F5FB; --card:#FFFFFF; --sunk:#F1F2F9; --ink:#1B1F3B; --muted:#6A6F8E; --line:#E3E5F0;
+  --p:#5B4BDB; --p2:#8B5CF6; --p-soft:#ECE9FF; --t:#0E9384; --t-soft:#DDF5F1;
+  --ok:#139A55; --ok-bg:#E6F7EE; --bad:#E0464C; --bad-bg:#FDECEC; --hl:rgba(255,206,51,.45);
+  --sh:0 1px 2px rgba(27,31,59,.05),0 6px 20px rgba(27,31,59,.06);
+  --sh-lg:0 12px 40px rgba(76,60,200,.28);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1020; --card:#171A2E; --sunk:#1F2339; --ink:#E9EAF6; --muted:#9A9EBE; --line:#2A2E48;
+  --p:#8B7CFF; --p2:#B794FF; --p-soft:rgba(139,124,255,.16); --t:#3DD6C3; --t-soft:rgba(61,214,195,.14);
+  --ok:#3DD68C; --ok-bg:rgba(61,214,140,.13); --bad:#FF6B70; --bad-bg:rgba(255,107,112,.13); --hl:rgba(255,206,51,.28);
+  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); --sh-lg:0 12px 40px rgba(0,0,0,.45); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1020; --card:#171A2E; --sunk:#1F2339; --ink:#E9EAF6; --muted:#9A9EBE; --line:#2A2E48;
+  --p:#8B7CFF; --p2:#B794FF; --p-soft:rgba(139,124,255,.16); --t:#3DD6C3; --t-soft:rgba(61,214,195,.14);
+  --ok:#3DD68C; --ok-bg:rgba(61,214,140,.13); --bad:#FF6B70; --bad-bg:rgba(255,107,112,.13); --hl:rgba(255,206,51,.28);
+  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); --sh-lg:0 12px 40px rgba(0,0,0,.45); color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 76px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai","Leelawadee UI","Thonburi","Noto Sans Thai",system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.big,.tab,.btn{font-family:"Anuphan","IBM Plex Sans Thai","Leelawadee UI",system-ui,sans-serif}
+a{color:var(--p);font-weight:600;text-decoration:none}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
+
+/* hero */
+.hero{margin:16px 0 0;border-radius:24px;padding:22px 20px;color:#fff;position:relative;overflow:hidden;
+  background:radial-gradient(120% 140% at 100% 0%,#A78BFA 0%,rgba(167,139,250,0) 55%),linear-gradient(135deg,#4338CA 0%,#6D28D9 100%);box-shadow:var(--sh-lg)}
+.hero::after{content:"";position:absolute;right:-60px;bottom:-80px;width:220px;height:220px;border-radius:50%;border:28px solid rgba(255,255,255,.07)}
+.hero-in{display:flex;gap:18px;align-items:center;position:relative;z-index:1}
+.hero h1{font-size:clamp(1.55rem,6.2vw,2.2rem);line-height:1.15;margin:0;font-weight:700;letter-spacing:-.01em}
+.hero p{margin:6px 0 0;color:rgba(255,255,255,.82);font-size:.88rem}
+.hero .ttl{flex:1;min-width:0}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.pills span{font-size:.75rem;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2);padding:3px 10px;border-radius:999px;white-space:nowrap}
+.ring{flex:0 0 auto;width:92px;height:92px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bgc{stroke:rgba(255,255,255,.18)} .ring .fgc{stroke:#fff;transition:stroke-dashoffset .6s ease}
+.ring .rt{position:absolute;inset:0;display:grid;place-content:center;text-align:center;line-height:1.1}
+.ring .rt b{font-family:"Anuphan",sans-serif;font-size:1.35rem}
+.ring .rt small{font-size:.66rem;opacity:.8}
+.hero-stats{display:flex;gap:16px;margin-top:12px;font-size:.8rem;color:rgba(255,255,255,.85)}
+.hero-stats b{color:#fff;font-size:1rem;font-family:"Anuphan",sans-serif;margin-right:3px}
+
+/* tabs */
+nav.tabs{position:sticky;top:0;z-index:10;padding-top:env(safe-area-inset-top,0px);margin-top:14px;
+  background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid var(--line)}
+nav.tabs .row{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;max-width:780px;margin:0 auto;scrollbar-width:none}
+nav.tabs .row::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:.9rem;font-weight:600;padding:7px 14px;border-radius:14px;cursor:pointer;line-height:1.25;text-align:left;transition:transform .15s,box-shadow .15s}
+.tab small{display:block;color:var(--muted);font-size:.7rem;font-weight:500;font-family:"IBM Plex Sans Thai",sans-serif}
+.tab.x{border-color:color-mix(in srgb,var(--p) 35%,var(--line))}
+.tab.x::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--p2);margin-right:6px;vertical-align:middle}
+.tab:hover{transform:translateY(-1px)}
+.tab[aria-selected="true"]{background:linear-gradient(135deg,var(--p),var(--p2));border-color:transparent;color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--p) 40%,transparent)}
+.tab[aria-selected="true"] small{color:rgba(255,255,255,.85)}
+.tab[aria-selected="true"]::before{background:#fff}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--p);outline-offset:2px}
+
+main{padding:24px 0 72px}
+h2{font-size:1.6rem;line-height:1.2;margin:0 0 4px;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 18px;font-size:.92rem}
+
+/* summary */
+details.sum{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-bottom:24px;box-shadow:var(--sh);overflow:hidden}
+details.sum>summary{cursor:pointer;padding:15px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center;font-family:"Anuphan",sans-serif;font-size:1.05rem}
+details.sum>summary::-webkit-details-marker{display:none}
+details.sum>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s;margin-right:4px}
+details.sum[open]>summary::after{transform:rotate(-135deg)}
+details.sum[open]>summary{border-bottom:1px solid var(--line)}
+.sumbody{padding:6px 18px 18px}
+.sumbody h4{margin:20px 0 6px;font-size:1rem;font-family:"Anuphan",sans-serif;color:var(--p)}
+.sumbody p{margin:6px 0}
+.sumbody ol{margin:6px 0;padding-left:22px}
+mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit;padding:0 .08em;border-radius:2px}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:420px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{background:var(--sunk);font-weight:600}
+td+td,th+th{border-left:1px solid var(--line)}
+.formula{background:var(--p-soft);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:.92rem;line-height:1.85;font-variant-numeric:tabular-nums}
+.note{background:var(--sunk);border-left:3px solid var(--p2);border-radius:8px;padding:9px 12px;font-size:.86rem}
+
+/* filters */
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:.84rem;padding:5px 12px;border-radius:999px;cursor:pointer;transition:background .15s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.reset{margin-left:auto;color:var(--muted);background:transparent;border-style:dashed}
+.score{font-size:.88rem;color:var(--muted);margin:0 0 14px}
+
+/* question */
+.q{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+.qh{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.qn{flex:0 0 auto;min-width:32px;height:32px;border-radius:10px;background:var(--p-soft);color:var(--p);display:grid;place-content:center;font-weight:700;font-size:.85rem;font-family:"Anuphan",sans-serif}
+.qt{font-weight:600;flex:1;padding-top:3px}
+.badge{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;margin-left:auto;align-self:flex-start;margin-top:5px}
+.badge.cw{background:#FFF1C2;color:#8A5A00}
+.badge.ex{background:var(--p-soft);color:var(--p)}
+:root[data-theme="dark"] .badge.cw{background:rgba(255,206,51,.16);color:#FFD66B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .badge.cw{background:rgba(255,206,51,.16);color:#FFD66B}}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;width:100%;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:.95rem;padding:9px 12px;border-radius:14px;cursor:pointer;line-height:1.5;transition:border-color .15s,background .15s,transform .1s}
+.opt b{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:grid;place-content:center;background:var(--sunk);color:var(--muted);font-weight:700;font-size:.8rem;font-family:"Anuphan",sans-serif;transition:background .15s,color .15s}
+.opt:hover:not([disabled]){border-color:var(--p);background:color-mix(in srgb,var(--p-soft) 50%,var(--card))}
+.opt:hover:not([disabled]) b{background:var(--p);color:#fff}
+.opt:active:not([disabled]){transform:scale(.99)}
+.opt[disabled]{cursor:default}
+.opt[disabled]:not(.right):not(.wrong){opacity:.6}
+.opt.right{background:var(--ok-bg);border-color:var(--ok)}
+.opt.right b{background:var(--ok);color:#fff}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt.wrong b{background:var(--bad);color:#fff}
+.exp{margin-top:12px;font-size:.9rem;padding:10px 12px;border-radius:12px;background:var(--sunk)}
+.exp strong.ok{color:var(--ok)} .exp strong.bad{color:var(--bad)}
+.empty{color:var(--muted);text-align:center;padding:40px 0;background:var(--card);border-radius:18px;border:1px dashed var(--line)}
+
+/* calc / written */
+.calc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:var(--sh)}
+.calc h3{margin:0 0 6px;font-size:1.12rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.calc h3 .badge{margin-left:0;margin-top:0}
+.steps{margin:10px 0 0;padding:12px 14px 12px 34px;background:var(--sunk);border-radius:12px}
+.steps li{margin:4px 0;font-variant-numeric:tabular-nums}
+.ex-q{font-weight:500;margin:10px 0 0}
+.practice{border-top:1px dashed var(--line);margin-top:14px;padding-top:12px}
+.practice p{margin:4px 0}
+.reveal{border:1.5px solid var(--line);color:var(--ink);background:var(--card);font:inherit;font-size:.84rem;font-weight:600;padding:6px 12px;border-radius:10px;cursor:pointer}
+.reveal:hover{border-color:var(--p);color:var(--p)}
+.reveal[data-chk]{background:var(--t);border-color:var(--t);color:#fff}
+.ans{font-weight:700;margin-top:6px;color:var(--t)}
+.flds{display:grid;gap:10px;margin-top:14px}
+.fld{display:grid;grid-template-columns:minmax(110px,42%) 1fr;gap:4px 10px;align-items:center;font-size:.92rem}
+.fld input,.fld select{font:inherit;font-size:1rem;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--sunk);color:var(--ink);min-width:0;width:100%;font-variant-numeric:tabular-nums;transition:border-color .15s,background .15s}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--p);background:var(--card);box-shadow:0 0 0 4px var(--p-soft)}
+.fm{grid-column:2;font-size:.84rem;font-weight:700}
+.fm.ok{color:var(--ok)} .fm.bad{color:var(--bad)}
+#calcref .calc{border:none;box-shadow:none;padding:14px 0;border-bottom:1px solid var(--line);border-radius:0;margin:0}
+
+/* mock / buttons */
+.mockbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+.btn{border:none;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:700;font-size:.95rem;padding:11px 18px;border-radius:14px;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--p) 35%,transparent);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.result{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:18px;box-shadow:var(--sh);display:flex;gap:16px;align-items:center}
+.result .big{font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--p),var(--p2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.result .rb{flex:1}
+.result .bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden;display:flex;margin-top:8px}
+.result .bar i{display:block;height:100%}
+.bar .g{background:var(--ok)} .bar .r{background:var(--bad)}
+
+/* home */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.lc{display:block;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--sh);color:var(--ink);font-weight:400;transition:transform .15s,border-color .15s}
+.lc:hover{transform:translateY(-2px);border-color:var(--p)}
+.lc .k{font-size:.75rem;color:var(--p);font-weight:700}
+.lc h3{margin:2px 0 4px;font-size:1.05rem}
+.lc p{margin:0;font-size:.8rem;color:var(--muted)}
+.lc .bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;display:flex;margin-top:12px}
+.lc .bar i{display:block;height:100%}
+.kw{display:grid;gap:10px}
+.kw div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--sh)}
+@media (prefers-reduced-motion:no-preference){
+  .exp,.steps{animation:in .22s ease-out}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="wrap"><div class="hero"><div class="hero-in">
+  <div class="ttl"><h1>ติวสอบ Final<br>Data Science</h1><p>เนื้อหาหลัง hypothesis test · Lec 8–13</p>
+  <div class="pills"><span>ปรนัย 95 ข้อ</span><span>วิธีทำ 3 ข้อ</span><span>3 ชั่วโมง</span><span>ปิดตำรา + เครื่องคิดเลข</span></div></div>
+  <div class="ring" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="bgc" cx="50" cy="50" r="42" fill="none" stroke-width="9"/><circle class="fgc" id="rfg" cx="50" cy="50" r="42" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg><div class="rt"><b id="rpct">0%</b><small>ทำแล้ว</small></div></div>
+</div><div class="hero-stats" id="gtxt"></div></div></header>
+<nav class="tabs" aria-label="หัวข้อ"><div class="row" id="tabs" role="tablist"></div></nav>
+<main><div class="wrap" id="view"></div></main>
+<script>
+const TOPICS = [];
+
+TOPICS.push({
+  id: "l8", lec: "Lec 8", cw: "Classwork 9", title: "Data Engineering",
+  summary: `
+<p>วิศวกรรมข้อมูล = <mark>ออกแบบและจัดการโครงสร้างพื้นฐาน</mark> สำหรับเก็บและประมวลผลข้อมูล ให้พร้อมป้อนเข้า ML</p>
+<h4>แหล่งข้อมูล 3 แบบ</h4>
+<p>ข้อมูลจากผู้ใช้ (ผิดพลาดบ่อย ต้องทำความสะอาดมาก) · ข้อมูลที่ระบบสร้าง เช่น log (สม่ำเสมอแต่ปริมาณมาก) · ข้อมูลบุคคลที่สาม (หลากหลาย ต้องระวังความเป็นส่วนตัว)</p>
+<h4>รูปแบบไฟล์</h4>
+<table>
+<tr><th></th><th>JSON</th><th>CSV</th><th>Parquet</th></tr>
+<tr><td>ชนิด</td><td>Text</td><td>Text</td><td>Binary</td></tr>
+<tr><td>เก็บแบบ</td><td>key-value</td><td>Row-major</td><td>Column-major</td></tr>
+<tr><td>เด่น</td><td>อ่านง่าย แลกเปลี่ยนข้อมูล</td><td>ง่าย เข้ากับ DB หลายชนิด</td><td>อ่านเฉพาะบางคอลัมน์เร็ว ประหยัดพื้นที่</td></tr>
+</table>
+<p>ข้อจำกัด JSON: <mark>ใช้พื้นที่มาก</mark> (เป็น text) และเปลี่ยนโครงสร้างภายหลังยาก · ตัวอย่างในสไลด์: CSV 14 MB → Parquet 6 MB</p>
+<p><b>Row-major</b> อ่านทั้งแถวเร็ว · <b>Column-major</b> อ่านทั้งคอลัมน์เร็ว (เหมาะงานวิเคราะห์)</p>
+<h4>Data Model</h4>
+<table>
+<tr><th>โมเดล</th><th>เหมาะกับ</th><th>ข้อจำกัด / ตัวอย่าง</th></tr>
+<tr><td>Relational (Codd, 1970)</td><td>ข้อมูลมีโครงสร้าง ต้องการความสอดคล้อง</td><td><mark>Join หลายตารางทำให้ช้า</mark>, schema ตายตัว · MySQL, PostgreSQL</td></tr>
+<tr><td>Document (NoSQL)</td><td>ข้อมูลยืดหยุ่น เปลี่ยนบ่อย</td><td>เก็บ JSON/XML/BSON · MongoDB · collection≈table, document≈row</td></tr>
+<tr><td>Graph (NoSQL)</td><td>ข้อมูลที่ความสัมพันธ์สำคัญ</td><td>node + edge · <mark>Neo4j</mark></td></tr>
+</table>
+<p>SQL เป็นภาษาแบบ <b>declarative</b> (บอกแค่ผลลัพธ์ที่ต้องการ) ระบบใช้ Query Optimizer หาวิธีดึงเอง</p>
+<h4>ที่เก็บข้อมูล</h4>
+<table>
+<tr><th>Data Warehouse</th><th>Data Lake</th><th>Data Lakehouse</th></tr>
+<tr><td>ข้อมูลมีโครงสร้าง ประมวลผลแล้ว พร้อมวิเคราะห์</td><td>ข้อมูลดิบทุกประเภท ไม่ต้องกำหนดโครงสร้าง</td><td>ผสมข้อดีของทั้งสอง (Databricks, Snowflake)</td></tr>
+</table>
+<p><b>ETL</b> = Extract → Transform → Load · <b>ELT</b> = โหลดข้อมูลดิบก่อน แล้วค่อยแปลง</p>
+<h4>OLTP vs OLAP</h4>
+<p><b>OLTP</b> ธุรกรรมของผู้ใช้ ต้องเร็ว (จองตั๋ว, เรียกรถ) ใช้ ACID, row-major · <b>OLAP</b> query เชิงวิเคราะห์ aggregate หลายแถว (ราคาเฉลี่ยค่ารถเดือน ก.ย.)</p>
+<p><b>ACID</b>: Atomicity (สำเร็จทั้งหมดหรือยกเลิกทั้งหมด) · Consistency (ตามกฎที่วางไว้) · Isolation (ธุรกรรมพร้อมกันแยกกัน) · Durability (ยืนยันแล้วคงอยู่แม้ระบบล่ม) · ระบบที่ไม่เป็น ACID เรียก <b>BASE</b> (Basically Available, Soft state, Eventual consistency)</p>
+<h4>Dataflow 3 โหมด</h4>
+<p>1) ผ่านฐานข้อมูล (ช้า ไม่เหมาะ real-time) · 2) ผ่าน Request: REST (API สาธารณะ), RPC (ภายในองค์กร) — แบบ synchronous · 3) <mark>Real-time transport</mark> ผ่าน broker ในหน่วยความจำ: Pub/Sub (Kafka, Kinesis) และ Message Queue (RabbitMQ, RocketMQ) → ลดความซับซ้อนการสื่อสารระหว่างบริการ</p>
+<h4>Batch vs Stream</h4>
+<table>
+<tr><th></th><th>Batch</th><th>Stream</th></tr>
+<tr><td>ข้อมูล</td><td>ในอดีต (historical)</td><td>ปัจจุบัน ทันทีที่เข้ามา</td></tr>
+<tr><td>เครื่องมือ</td><td>MapReduce, Spark</td><td>Apache Flink, KSQL</td></tr>
+<tr><td>ฟีเจอร์</td><td>เปลี่ยนช้า (คะแนนคนขับ)</td><td>เปลี่ยนเร็ว (จำนวนคนขับตอนนี้)</td></tr>
+<tr><td>ข้อเสีย</td><td>ช้า ข้อมูลอาจไม่ทันสมัย</td><td>ซับซ้อน ต้องใช้ระบบประสิทธิภาพสูง</td></tr>
+</table>`,
+  quiz: [
+    {s:"cw", q:"ข้อใดเป็นหน้าที่หลักของ Data Engineering?", o:["ออกแบบและจัดการโครงสร้างพื้นฐานสำหรับการเก็บและประมวลผลข้อมูล","วิเคราะห์ข้อมูลที่เก็บไว้ใน Data Warehouse","จัดการและบำรุงรักษาโมเดล Machine Learning","นำเสนอข้อมูลในรูปแบบ Visualization","ดูแลและบริหารระบบปฏิบัติการของเซิร์ฟเวอร์"], a:0, e:"Data Engineering ดูแล pipeline และที่เก็บข้อมูล ส่วนการวิเคราะห์/visualization เป็นงาน Data Analyst/Scientist"},
+    {s:"cw", q:"ข้อใดเป็นคุณสมบัติหลักของ Data Warehouse?", o:["จัดเก็บข้อมูลแบบเรียลไทม์โดยไม่ต้องแปลง","เป็นที่เก็บข้อมูลดิบทุกประเภทโดยไม่กำหนดโครงสร้าง","จัดเก็บข้อมูลที่ผ่านการประมวลผลเพื่อใช้วิเคราะห์","ใช้เป็นแหล่งข้อมูลหลักของ NoSQL Database","รองรับการประมวลผลข้อมูลที่ไม่มีโครงสร้าง"], a:2, e:"Warehouse = ข้อมูลมีโครงสร้าง ประมวลผลแล้ว · ตัวเลือกที่ 2 คือ Data Lake"},
+    {s:"cw", q:"Data Lake แตกต่างจาก Data Warehouse อย่างไร?", o:["Data Lake ใช้โครงสร้างฐานข้อมูลเชิงสัมพันธ์ ในขณะที่ Data Warehouse ใช้ NoSQL","Data Lake เก็บข้อมูลดิบ ในขณะที่ Data Warehouse เก็บข้อมูลที่ประมวลผลแล้ว","Data Lake มีประสิทธิภาพสูงกว่าสำหรับการประมวลผลเชิงธุรกรรม","Data Warehouse เหมาะสำหรับการจัดเก็บข้อมูลประเภทวิดีโอและเสียงมากกว่า Data Lake","Data Lake ไม่สามารถใช้ร่วมกับระบบ Machine Learning ได้"], a:1, e:"Lake = raw data ก่อนประมวลผล, Warehouse = processed พร้อมใช้"},
+    {s:"cw", q:"JSON มีข้อจำกัดที่สำคัญอะไรในการจัดเก็บข้อมูล?", o:["ไม่สามารถใช้ร่วมกับ NoSQL Database ได้","ไม่สามารถจัดเก็บข้อมูลเชิงโครงสร้างได้","ไม่รองรับการใช้งานร่วมกับ Apache Spark","ไม่มีการรองรับการจัดเก็บข้อมูลแบบไบนารี","มีขนาดไฟล์ใหญ่กว่า Parquet และ CSV"], a:4, e:"สไลด์ระบุข้อจำกัด JSON 2 ข้อ: ความยืดหยุ่นต่ำ และใช้พื้นที่จัดเก็บมากเพราะเป็น text"},
+    {s:"cw", q:"Parquet เหมาะกับการใช้งานใดมากที่สุด?", o:["การจัดเก็บข้อมูลแบบ Row-major format","การจัดเก็บข้อมูลขนาดเล็กเพื่อใช้ในแอปพลิเคชันเว็บ","การจัดเก็บข้อความที่ต้องให้มนุษย์อ่านง่าย","การประมวลผลข้อมูลขนาดใหญ่ที่ต้องการเข้าถึงเฉพาะบางคอลัมน์","ใช้สำหรับการบีบอัดข้อมูล JSON เพื่อการวิเคราะห์"], a:3, e:"Parquet เป็น column-major + binary จึงอ่านเฉพาะคอลัมน์ที่ต้องการได้เร็ว"},
+    {s:"cw", q:"ระบบฐานข้อมูลแบบ Relational Database (RDBMS) มีข้อจำกัดอย่างไร?", o:["ไม่รองรับการ Query ข้อมูลแบบ SQL","ข้อมูลที่เก็บต้องเป็นข้อมูลที่ไม่มีโครงสร้าง","การ Join ตารางจำนวนมากอาจทำให้ประสิทธิภาพลดลง","ไม่สามารถใช้ร่วมกับระบบ Data Warehouse ได้","ไม่สามารถรองรับข้อมูลแบบ Transactional ได้"], a:2, e:"Normalization กระจายข้อมูลไปหลายตาราง ต้อง JOIN ซึ่งมีต้นทุนสูงกับตารางใหญ่"},
+    {s:"cw", q:"ข้อใดเป็นคุณสมบัติสำคัญของ NoSQL Database?", o:["ใช้โครงสร้างตารางแบบเดียวกับ RDBMS","รองรับการเก็บข้อมูลที่ไม่มีโครงสร้าง เช่น JSON, XML","รองรับการ Query ข้อมูลด้วย SQL เท่านั้น","มีโครงสร้างข้อมูลที่ตายตัว ไม่สามารถเปลี่ยนแปลงได้","เหมาะสำหรับการจัดเก็บข้อมูลแบบ Row-major format เท่านั้น"], a:1, e:"NoSQL = Not Only SQL รองรับรูปแบบข้อมูลหลากหลาย ไม่มี schema ตายตัว"},
+    {s:"cw", q:"ETL ย่อมาจากอะไร?", o:["Error, Transform, Load","Extract, Load, Transform","Evaluate, Transform, Load","Evaluate, Load, Transform","Extract, Transform, Load"], a:4, e:"Extract, Transform, Load · ระวังสลับกับ ELT (Extract, Load, Transform)"},
+    {s:"cw", q:"ข้อใดเป็นข้อดีของ Batch Processing?", o:["ประหยัดทรัพยากรระบบเมื่อเทียบกับ Stream Processing","สามารถประมวลผลข้อมูลได้แบบ Real-time","ใช้ได้เฉพาะกับข้อมูลที่ไม่มีโครงสร้าง","รองรับการประมวลผลเฉพาะข้อมูลที่มีขนาดเล็กเท่านั้น","มีประสิทธิภาพต่ำเมื่อใช้กับข้อมูลจำนวนมาก"], a:0, e:"Batch ประมวลผลเป็นรอบ ไม่ต้องเฝ้าตลอดเวลา จึงใช้ทรัพยากรน้อยกว่า Stream ที่ต้องการระบบประสิทธิภาพสูง"},
+    {s:"cw", q:"Stream Processing เหมาะกับงานประเภทใด?", o:["วิเคราะห์ข้อมูลย้อนหลังที่เก็บใน Data Warehouse","ประมวลผลข้อมูลที่ต้องการการตอบสนองแบบ Real-time","ใช้สำหรับสร้างรายงานทางธุรกิจจากข้อมูลประวัติ","ทำความสะอาดข้อมูลดิบใน Data Lake","รองรับเฉพาะข้อมูลที่อยู่ในรูปแบบ JSON เท่านั้น"], a:1, e:"Stream ประมวลผลทันทีที่ข้อมูลเข้ามา ข้อ 1 และ 3 เป็นงานของ Batch"},
+    {s:"cw", q:"ข้อใดเป็นตัวอย่างของระบบ OLTP?", o:["ระบบวิเคราะห์แนวโน้มยอดขายรายปี","ระบบการทำรายงานประจำไตรมาส","ระบบประมวลผลข้อมูลจากเซ็นเซอร์อุตสาหกรรม","ระบบดึงข้อมูลเชิงลึกจาก Big Data","ระบบการจองตั๋วเครื่องบินออนไลน์"], a:4, e:"OLTP = ธุรกรรมของผู้ใช้ ต้องตอบสนองเร็ว ตัวเลือกอื่นเป็นงานวิเคราะห์ (OLAP)"},
+    {s:"cw", q:"ข้อใดเป็นคุณสมบัติของ OLAP?", o:["รองรับการทำธุรกรรมที่ต้องการความเร็วสูง","เหมาะสำหรับการ Query ข้อมูลเชิงวิเคราะห์","ใช้โครงสร้างฐานข้อมูลแบบ NoSQL","ไม่สามารถทำ Aggregation บนข้อมูลขนาดใหญ่ได้","มีความเร็วสูงกว่าระบบ OLTP ในการประมวลผลธุรกรรม"], a:1, e:"OLAP = Online Analytical Processing เน้น aggregate ข้อมูลหลายแถวหลายมุมมอง"},
+    {s:"cw", q:"Data Lakehouse มีจุดเด่นอย่างไร?", o:["รองรับเฉพาะข้อมูลที่มีโครงสร้างชัดเจน","ใช้ได้เฉพาะกับระบบที่มีขนาดข้อมูลน้อย","ไม่สามารถทำงานร่วมกับระบบ Machine Learning ได้","ไม่รองรับการทำ Query ข้อมูล","ผสมผสานข้อดีของ Data Lake และ Data Warehouse"], a:4, e:"ยืดหยุ่นแบบ Lake + มีโครงสร้าง/เร็วแบบ Warehouse"},
+    {s:"cw", q:"ข้อใดเป็นข้อได้เปรียบของ Pub/Sub Model ในระบบ Real-time Transport?", o:["ลดความซับซ้อนของการจัดการข้อมูลระหว่างบริการ","รองรับเฉพาะการสื่อสารแบบ Synchronous","ไม่สามารถใช้กับระบบที่ต้องการความเร็วสูงได้","เหมาะกับการใช้งานในระบบฐานข้อมูลแบบเชิงสัมพันธ์เท่านั้น","รองรับเฉพาะการใช้งานภายในองค์กร ไม่สามารถใช้บน Cloud ได้"], a:0, e:"บริการแค่ publish ไปที่ broker ใครอยากได้ก็ subscribe ไม่ต้องยิง request หากันเอง"},
+    {s:"cw", q:"ข้อใดเป็นตัวอย่างของ Graph Database?", o:["MySQL","PostgreSQL","MongoDB","Google BigQuery","Neo4j"], a:4, e:"MySQL/PostgreSQL = relational, MongoDB = document, BigQuery = analytical warehouse"},
+    {s:"cw", q:"ข้อใดอธิบายความแตกต่างระหว่าง Row-major และ Column-major format ได้ถูกต้องที่สุด?", o:["ไม่มีความแตกต่างระหว่าง Row-major และ Column-major","Row-major เหมาะสำหรับการอ่านข้อมูลเป็นแถว ส่วน Column-major เหมาะสำหรับการอ่านข้อมูลเป็นคอลัมน์","Row-major เหมาะกับการจัดเก็บข้อมูลที่ไม่มีโครงสร้าง ส่วน Column-major ใช้ได้กับข้อมูลที่มีโครงสร้างเท่านั้น","Row-major มีประสิทธิภาพสูงกว่าสำหรับ Big Data Analytics","Column-major ใช้เฉพาะกับฐานข้อมูลเชิงสัมพันธ์"], a:1, e:"ข้อมูลที่อยู่ติดกันในหน่วยความจำอ่านเร็วกว่า"},
+    {s:"ex", q:"CSV และ Parquet จัดเก็บข้อมูลแบบใดตามลำดับ?", o:["Column-major, Row-major","Row-major, Column-major","Row-major ทั้งคู่","Column-major ทั้งคู่","Text ทั้งคู่"], a:1, e:"CSV = row-major (text), Parquet = column-major (binary)"},
+    {s:"ex", q:"การแปลงไฟล์ CSV เป็น Parquet ทำให้ขนาดไฟล์ลดลงมาก เหตุผลหลักคืออะไร?", o:["Parquet ลบข้อมูลซ้ำออกอัตโนมัติ","Parquet เป็นรูปแบบไบนารี ใช้พื้นที่น้อยกว่ารูปแบบข้อความ","Parquet เก็บเฉพาะคอลัมน์ที่ถูกใช้งานบ่อย","Parquet แปลงข้อมูลเป็น JSON ก่อนเก็บ","Parquet ลดจำนวนแถวลง"], a:1, e:"Text format (CSV, JSON) ใช้พื้นที่มากกว่า binary · ตัวอย่างสไลด์ 14 MB → 6 MB"},
+    {s:"ex", q:"แอปเรียกรถ: ถ้าการชำระเงินล้มเหลว ระบบต้องไม่จัดคนขับให้ผู้ใช้ เป็นคุณสมบัติใดของ ACID?", o:["Atomicity","Consistency","Isolation","Durability","Availability"], a:0, e:"Atomicity = ทุกขั้นตอนต้องสำเร็จเป็นกลุ่ม ถ้าขั้นหนึ่งล้ม ยกเลิกทั้งหมด"},
+    {s:"ex", q:"ผู้ใช้จองรถแล้วแบตโทรศัพท์หมด แต่รถยังมารับตามที่จอง เป็นคุณสมบัติใดของ ACID?", o:["Atomicity","Consistency","Isolation","Durability","Eventual consistency"], a:3, e:"Durability = เมื่อยืนยันธุรกรรมแล้ว ผลต้องคงอยู่แม้ระบบล้มเหลว"},
+    {s:"ex", q:"ผู้ใช้สองคนจองคนขับคนเดียวกันพร้อมกันไม่ได้ เป็นคุณสมบัติใดของ ACID?", o:["Atomicity","Consistency","Isolation","Durability","Partition tolerance"], a:2, e:"Isolation = ธุรกรรมที่เกิดพร้อมกันต้องถูกปฏิบัติแยกจากกัน"},
+    {s:"ex", q:"ระบบฐานข้อมูลที่ไม่ตรงตามเกณฑ์ ACID บางครั้งเรียกว่าอะไร?", o:["CRUD","BASE","OLAP","CAP","SOLID"], a:1, e:"BASE = Basically Available, Soft state, Eventual consistency"},
+    {s:"ex", q:"แนวคิด ELT ต่างจาก ETL อย่างไร?", o:["ELT ไม่มีขั้นตอน Transform","ELT โหลดข้อมูลดิบเข้าที่เก็บก่อน แล้วค่อยแปลงภายหลัง","ELT ใช้ได้เฉพาะข้อมูลที่มีโครงสร้าง","ELT ทำ Transform ก่อน Extract","ELT ใช้เฉพาะกับ Data Warehouse"], a:1, e:"ELT ยืดหยุ่นกับข้อมูลไม่มีโครงสร้าง แต่ประมวลผลข้อมูลดิบขนาดใหญ่ใช้ทรัพยากรมาก"},
+    {s:"ex", q:"ใน Document Model ข้อใดเทียบได้กับ \"ตาราง\" ในฐานข้อมูลเชิงสัมพันธ์?", o:["Document","Field","Collection","Node","Edge"], a:2, e:"Collection ≈ Table, Document ≈ Row แต่ document ใน collection เดียวกันโครงสร้างต่างกันได้"},
+    {s:"ex", q:"ต้องการค้นหาทุกคนที่เกิดในสหรัฐอเมริกา โดยจำนวน hop ระหว่างคนกับประเทศไม่เท่ากัน โมเดลข้อมูลใดเหมาะที่สุด?", o:["Relational Model","Document Model","Graph Model","Key-value Model","Columnar Model"], a:2, e:"Graph เน้นความสัมพันธ์ เดินตาม edge (within, born_in) ได้ง่าย ส่วน SQL ทำยากเพราะไม่รู้จำนวน hop"},
+    {s:"ex", q:"ข้อใดจับคู่ระบบ Real-time Transport ได้ถูกต้อง?", o:["Pub/Sub: RabbitMQ · Message Queue: Kafka","Pub/Sub: Kafka · Message Queue: RabbitMQ","Pub/Sub: MySQL · Message Queue: MongoDB","Pub/Sub: Spark · Message Queue: Flink","Pub/Sub: REST · Message Queue: RPC"], a:1, e:"Pub/Sub: Apache Kafka, Amazon Kinesis · Message Queue: RabbitMQ, Apache RocketMQ"},
+    {s:"ex", q:"การส่งข้อมูลแบบใดเหมาะกับคำขอภายในองค์กร ภายในศูนย์ข้อมูลเดียวกัน เหมือนการเรียกฟังก์ชันในโปรแกรม?", o:["REST","RPC","Pub/Sub","ผ่านฐานข้อมูล","Batch"], a:1, e:"RPC (Remote Procedure Call) เหมาะใช้ภายใน · REST เหมาะเป็น API สาธารณะ"},
+    {s:"ex", q:"ปัญหาหลักของการส่งข้อมูลผ่าน Request เมื่อมีบริการหลายร้อยตัวคืออะไร?", o:["ต้องใช้ฐานข้อมูลเชิงสัมพันธ์","เป็นแบบ synchronous ถ้าบริการหนึ่งล่มอาจลากบริการอื่นล่มตาม และเกิดคอขวด","ส่งข้อมูลได้เฉพาะ JSON","ไม่สามารถใช้บน cloud","ไม่รองรับ microservices"], a:1, e:"จึงแก้ด้วย broker กลาง (real-time transport)"},
+    {s:"ex", q:"เครื่องมือใดใช้กับ Stream Processing?", o:["MapReduce","Apache Spark (batch)","Apache Flink","Excel","Data Warehouse"], a:2, e:"Batch: MapReduce, Spark · Stream: Apache Flink, KSQL"},
+    {s:"ex", q:"ฟีเจอร์ \"จำนวนคนขับที่ว่างอยู่ตอนนี้\" ควรคำนวณด้วยวิธีใด?", o:["Batch processing เพราะเป็นข้อมูลในอดีต","Stream processing เพราะเปลี่ยนแปลงเร็ว","ETL รายเดือน","OLAP","Data Warehouse"], a:1, e:"ฟีเจอร์ที่เปลี่ยนเร็วใช้ stream ส่วนที่เปลี่ยนช้า (คะแนนคนขับ) ใช้ batch"},
+    {s:"ex", q:"ข้อมูลประเภทใดมักมีความผิดพลาดและต้องทำความสะอาดอย่างละเอียดที่สุด?", o:["ข้อมูลจากผู้ใช้ป้อนโดยตรง","ล็อกไฟล์ที่ระบบสร้าง","ผลลัพธ์การทำนายของโมเดล","ข้อมูลใน Data Warehouse","ข้อมูลใน Parquet"], a:0, e:"ข้อมูลจากผู้ใช้ (ข้อความ รูป ไฟล์) ผิดพลาดบ่อย · ข้อมูลระบบมักสม่ำเสมอแต่ปริมาณมาก"},
+    {s:"ex", q:"ภาษา SQL ถูกจัดเป็นภาษาแบบใด?", o:["Imperative — ต้องระบุขั้นตอนทุกขั้น","Declarative — ระบุผลลัพธ์ที่ต้องการ ระบบหาวิธีดึงเอง","Functional — ใช้ฟังก์ชันซ้อนกัน","Object-oriented","Assembly"], a:1, e:"ระบบจัดการฐานข้อมูลใช้ Query Optimizer วางแผนการดึงข้อมูลเอง"}
+  ]
+});
+
+TOPICS.push({
+  id: "l9", lec: "Lec 9", cw: "Classwork 10", title: "Training Data",
+  summary: `
+<h4>ทำไมต้องเตรียม Training Data</h4>
+<p>ผลลัพธ์โมเดลขึ้นกับคุณภาพข้อมูล · ลดจำนวน epoch ประหยัดค่าคำนวณ · <mark>ป้องกัน Overfitting และ Underfitting</mark></p>
+<p>Overfitting = จำข้อมูลฝึกละเอียดเกินไป ใช้กับข้อมูลใหม่ไม่ได้ · Underfitting = จับ pattern ไม่ได้</p>
+<h4>Sampling</h4>
+<p>ทำเพื่อ: ลดขนาดข้อมูล/ภาระคำนวณ, เข้าถึงข้อมูลทั้งหมดไม่ได้, ทดสอบแนวคิดเร็ว</p>
+<table>
+<tr><th>Non-probability (ไม่ใช้ความน่าจะเป็น, มีอคติ)</th><th>Random (ใช้หลักสถิติ)</th></tr>
+<tr><td><b>Convenience</b> เลือกที่เข้าถึงง่าย<br><b>Snowball</b> ขยายต่อเป็นทอด (follow ของ follow)<br><b>Expert</b> เลือกผู้เชี่ยวชาญ<br><mark><b>Quota</b></mark> กำหนดจำนวนแต่ละกลุ่มตามสัดส่วน</td>
+<td><b>Simple Random</b> ทุกตัวมีโอกาสเท่ากัน<br><b>Stratified</b> แบ่งชั้นแล้วสุ่มแต่ละชั้น — แม่นขึ้น แต่<mark>ซับซ้อน ใช้เวลา</mark> ต้องรู้ลักษณะประชากร<br><b>Weighted</b> ให้น้ำหนักแต่ละตัว (แดง 25% น้ำเงิน 75% → ให้แดงหนักกว่า 3 เท่า)<br><b>Reservoir</b> สุ่มจาก stream</td></tr>
+</table>
+<p class="note">ระวัง: Systematic และ Cluster sampling เป็นแบบ probability</p>
+<h4>Reservoir Sampling</h4>
+<p>ใช้เมื่อ <mark>ข้อมูลไหลเข้ามาต่อเนื่อง ใหญ่เกินหน่วยความจำ</mark> ไม่รู้จำนวนทั้งหมดล่วงหน้า</p>
+<ol><li>เติม k ตัวแรกลง reservoir</li><li>ตัวที่ n: สุ่ม I จาก [1, n] ถ้า I ≤ k แทนที่ตำแหน่ง I ไม่งั้นข้าม</li><li>หยุดเมื่อไรก็ได้ ทุกตัวมีโอกาสอยู่ใน reservoir = k/N</li></ol>
+<p>ผลลัพธ์ <mark>ไม่แน่นอน</mark> ขึ้นกับการสุ่มแต่ละรอบ</p>
+<h4>Labeling</h4>
+<p>สำคัญกับ Supervised Learning — label ผิด โมเดลเรียนผิด กระทบ accuracy/precision/recall/F1</p>
+<p><b>Hand label</b>: แพง ช้า ปัญหาความเป็นส่วนตัว · <b>Label multiplicity</b>: ผู้ติดฉลากหลายคนให้ label ขัดแย้ง → แก้ด้วย <b>Data lineage</b> (ติดตามที่มาข้อมูล) · <b>Natural label</b>: ได้จากระบบเอง เช่น เวลาเดินทางจริงของ Google Maps, การคลิกโฆษณา</p>
+<h4>เมื่อขาด Label: 4 เทคนิค</h4>
+<table>
+<tr><th>วิธี</th><th>หลักการ</th><th>ต้องมี ground truth?</th></tr>
+<tr><td>Weak Supervision</td><td>ใช้ heuristic สร้าง label ผ่าน Labeling Function (Snorkel): <mark>Keyword heuristic</mark>, Regex, Database lookup, Model output</td><td>ไม่ต้อง (แนะนำมีเล็กน้อย)</td></tr>
+<tr><td>Semi-Supervision</td><td>สมมติฐานเชิงโครงสร้าง: <b>Self-training</b>, ความคล้ายคลึง (clustering/KNN), Perturbation (เติม noise)</td><td>ต้อง (เล็กน้อย)</td></tr>
+<tr><td>Transfer Learning</td><td>เอาโมเดลต้นน้ำมาใช้กับงานใหม่: zero-shot, fine-tuning → <mark>ลดเวลา ลดต้นทุน</mark></td><td>zero-shot ไม่ต้อง / fine-tune ต้องเล็กน้อย</td></tr>
+<tr><td>Active Learning</td><td><mark>โมเดลเลือกตัวอย่างที่ไม่แน่นอนสูง</mark> (ใกล้ decision boundary) ให้มนุษย์ label · อีกชื่อ Query learning</td><td>ต้อง</td></tr>
+</table>`,
+  quiz: [
+    {s:"cw", q:"ทำไมการเตรียม Training Data จึงมีความสำคัญ?", o:["ช่วยให้โมเดลสามารถทำงานแบบอัตโนมัติได้","ลดความซับซ้อนของอัลกอริธึม","ทำให้โมเดลสามารถทำนายผลลัพธ์ได้เร็วขึ้น","ไม่มีผลต่อความแม่นยำของโมเดล","ป้องกันปัญหา Overfitting และ Underfitting"], a:4, e:"เป็นเหตุผลข้อ 3 ในสไลด์"},
+    {s:"cw", q:"ข้อใดเป็นปัญหาหลักที่เกิดจากการใช้ข้อมูลฝึกที่ไม่มีคุณภาพ?", o:["ทำให้โมเดลทำงานช้าลง","ทำให้โมเดลใช้พลังงานมากขึ้น","ทำให้โมเดลเรียนรู้ข้อมูลที่ผิดพลาดและอาจให้ผลลัพธ์ที่ไม่แม่นยำ","ทำให้โมเดลใช้ข้อมูลน้อยลง","ไม่มีผลต่อประสิทธิภาพของโมเดล"], a:2, e:"Garbage in, garbage out"},
+    {s:"cw", q:"การสุ่มตัวอย่าง (Sampling) มีความสำคัญอย่างไรใน Machine Learning?", o:["ใช้ลดขนาดข้อมูลเพื่อลดภาระการประมวลผล","ทำให้โมเดลเรียนรู้ได้เร็วขึ้น","ป้องกันข้อมูลที่ไม่สมดุล","ไม่มีผลต่อการฝึกโมเดลเลย","ข้อ 1-3 ถูกต้อง"], a:4, ns:true, e:"ข้อ 1–3 ล้วนเป็นประโยชน์ของ sampling"},
+    {s:"cw", q:"ข้อใดเป็นตัวอย่างของการสุ่มตัวอย่างแบบไม่ใช้ความน่าจะเป็น (Non-Probability Sampling)?", o:["Simple Random Sampling","Stratified Sampling","Systematic Sampling","Cluster Sampling","Quota Sampling"], a:4, e:"Non-probability: Convenience, Snowball, Expert, Quota · ที่เหลือเป็น probability"},
+    {s:"cw", q:"การสุ่มตัวอย่างแบบสุ่มธรรมดา (Simple Random Sampling) มีข้อดีอะไร?", o:["ใช้ได้กับข้อมูลที่ไม่มีโครงสร้าง","ใช้เวลาน้อยกว่าการสุ่มแบบอื่น","ทำให้ทุกตัวอย่างมีโอกาสถูกเลือกเท่ากัน","ใช้ได้เฉพาะกับข้อมูลเชิงคุณภาพ","ไม่สามารถนำไปใช้กับ Machine Learning ได้"], a:2, e:"นิยามของ simple random"},
+    {s:"cw", q:"ข้อใดเป็นข้อเสียของการสุ่มตัวอย่างแบบแบ่งชั้น (Stratified Sampling)?", o:["ไม่สามารถใช้กับข้อมูลที่มีโครงสร้างได้","มีความแม่นยำต่ำกว่าการสุ่มแบบสุ่มธรรมดา","ไม่สามารถใช้ร่วมกับ Data Science ได้","ไม่สามารถลดความคลาดเคลื่อนของข้อมูลได้","ใช้เวลานานและซับซ้อน"], a:4, e:"ต้องรู้ลักษณะประชากรเพื่อแบ่งชั้น และอาจต้องเก็บข้อมูลเพิ่ม"},
+    {s:"cw", q:"Reservoir Sampling เหมาะกับสถานการณ์ใด?", o:["การสุ่มข้อมูลจากชุดข้อมูลที่มีขนาดใหญ่เกินไปสำหรับหน่วยความจำ","การวิเคราะห์ข้อมูลเชิงสถิติ","การลดขนาดของ Data Warehouse","การพัฒนาโมเดล Deep Learning","การเพิ่มประสิทธิภาพของ NoSQL Database"], a:0, e:"ใช้กับ streaming data ที่เก็บทั้งหมดในหน่วยความจำไม่ได้"},
+    {s:"cw", q:"ข้อมูล [10, 20, ..., 100] ใช้ Reservoir Sampling ขนาด 3 หลังข้อมูลตัวที่ 5 reservoir = [20, 30, 50] หลังข้อมูลตัวที่ 10 reservoir จะเป็นอะไร?", o:["[10, 20, 30]","[80, 90, 100]","[50, 60, 70]","[20, 30, 50]","ไม่แน่นอน ข้อมูลใน Reservoir จะถูกสุ่มใหม่ทุกครั้งที่มีข้อมูลใหม่เข้ามา"], a:4, ns:true, e:"ตัวที่ 6–10 แต่ละตัวมีโอกาสเข้าไปแทนที่ (3/n) จึงบอกผลแน่นอนไม่ได้"},
+    {s:"cw", q:"การติดฉลากข้อมูล (Labeling) มีความสำคัญอย่างไรใน Supervised Learning?", o:["ทำให้โมเดลสามารถทำงานแบบ Unsupervised ได้","ลดปัญหาของการใช้ข้อมูลเชิงตัวเลข","ป้องกันการใช้ข้อมูลขนาดใหญ่เกินไป","ไม่มีผลต่อประสิทธิภาพของโมเดล","ช่วยให้โมเดลสามารถเรียนรู้จากข้อมูลที่มีโครงสร้าง"], a:4, e:"Supervised learning ต้องเรียนจากตัวอย่างที่มีป้ายกำกับ"},
+    {s:"cw", q:"ข้อใดเป็นเทคนิคของ Weak Supervision?", o:["Self-Training","Keyword Heuristic","Data Augmentation","Transfer Learning","Reinforcement Learning"], a:1, e:"Keyword Heuristic เป็น Labeling Function แบบหนึ่ง · Self-training เป็น Semi-supervision"},
+    {s:"cw", q:"Transfer Learning มีประโยชน์อย่างไร?", o:["ช่วยลดเวลาในการฝึกโมเดลใหม่","ลดต้นทุนของการฝึกโมเดล","ใช้โมเดลที่พัฒนามาก่อนเพื่อปรับใช้กับงานใหม่","ใช้ได้เฉพาะกับ Neural Networks","ข้อ 1-3 ถูกต้อง"], a:4, ns:true, e:"ข้อ 1–3 ตรงกับข้อดีในสไลด์"},
+    {s:"cw", q:"Active Learning มีหลักการอย่างไร?", o:["ใช้โมเดลที่ผ่านการฝึกมาแล้วทั้งหมด","ใช้การเรียนรู้แบบไม่มีผู้สอน","โมเดลเลือกตัวอย่างที่ต้องการให้มนุษย์ช่วยติดฉลาก","ต้องใช้ข้อมูลขนาดใหญ่มาก","ใช้ได้เฉพาะในงาน NLP"], a:2, e:"โมเดล 'ถาม' กลับ จึงเรียกอีกชื่อว่า query learning"},
+    {s:"cw", q:"การเรียนรู้เชิงรุก (Active Learning) มีจุดเด่นอะไร?", o:["โมเดลสามารถฝึกตัวเองได้โดยไม่ต้องมีข้อมูล Label","โมเดลเลือกตัวอย่างที่มีความไม่แน่นอนสูงให้มนุษย์ช่วย Label","ใช้ข้อมูลที่มีความแน่นอนสูงในการฝึกโมเดล","ใช้ได้เฉพาะกับโมเดล Neural Networks เท่านั้น","ไม่มีความแตกต่างจาก Supervised Learning"], a:1, e:"ระวังสับสน: เลือกตัวที่ 'มั่นใจสูง' มาเพิ่มเองคือ self-training"},
+    {s:"ex", q:"เริ่มเก็บข้อมูลจากบัญชี Twitter ไม่กี่บัญชี แล้วขยายต่อไปยังบัญชีที่บัญชีเหล่านั้นติดตาม เป็นการสุ่มแบบใด?", o:["Convenience Sampling","Snowball Sampling","Quota Sampling","Stratified Sampling","Reservoir Sampling"], a:1, e:"ขยายเป็นทอดๆ เหมือนก้อนหิมะ"},
+    {s:"ex", q:"ข้อมูลมีสีแดง 25% สีน้ำเงิน 75% แต่ในโลกจริงสองสีมีความน่าจะเป็นเท่ากัน ควรใช้ Weighted Sampling อย่างไร?", o:["ให้น้ำหนักสีน้ำเงินมากกว่า 3 เท่า","ให้น้ำหนักสีแดงมากกว่าสีน้ำเงิน 3 เท่า","ลบสีน้ำเงินออกครึ่งหนึ่ง","ให้น้ำหนักเท่ากัน","ใช้ Quota sampling แทน"], a:1, e:"75/25 = 3 เท่า จึงชดเชยด้วยการให้สีแดงหนักกว่า 3 เท่า"},
+    {s:"ex", q:"สำรวจนักศึกษาโดยแบ่งตามคณะ แล้วสุ่มนักศึกษาจากแต่ละคณะ เป็นการสุ่มแบบใด?", o:["Simple Random","Stratified","Snowball","Convenience","Expert"], a:1, e:"แบ่งชั้น (strata) ตามคณะ แล้วสุ่มในแต่ละชั้น"},
+    {s:"ex", q:"Reservoir Sampling ขนาด k = 5 จากข้อมูลทั้งหมด N = 100 ตัว ความน่าจะเป็นที่ข้อมูลตัวใดตัวหนึ่งอยู่ใน reservoir ตอนจบคือเท่าไร?", o:["1%","5%","20%","50%","ขึ้นกับลำดับที่เข้ามา"], a:1, e:"P = k/N = 5/100 = 5% เท่ากันทุกตัว"},
+    {s:"ex", q:"Reservoir ขนาด k = 5 ข้อมูลตัวที่ n = 8 เข้ามา สุ่มได้ I = 7 จะเกิดอะไรขึ้น?", o:["แทนที่ตำแหน่ง 7","แทนที่ตำแหน่ง 2 (7 − 5)","ไม่เปลี่ยนแปลง เพราะ I > k","ขยาย reservoir เป็น 8","ลบตัวแรกออก"], a:2, e:"แทนที่เฉพาะเมื่อ I ≤ k"},
+    {s:"ex", q:"Google Maps ได้เวลาเดินทางจริงเมื่อผู้ใช้เดินทางตามเส้นทางที่แนะนำ ถือเป็น label แบบใด?", o:["Hand label","Natural label","Weak label","Synthetic label","Active label"], a:1, e:"Natural label เกิดจากระบบ/พฤติกรรมผู้ใช้เอง ไม่ต้องติดด้วยมือ"},
+    {s:"ex", q:"ผู้ติดฉลากหลายคนติดป้ายข้อมูลเดียวกันไม่ตรงกัน เรียกปัญหานี้ว่าอะไร และควรแก้อย่างไร?", o:["Label noise — ใช้ SMOTE","Label multiplicity — ติดตามที่มาของข้อมูล (Data lineage)","Overfitting — เพิ่มข้อมูล","Class imbalance — undersample","Data drift — retrain"], a:1, e:"Data lineage ช่วยรู้ว่าข้อมูล/ป้ายมาจากไหน แยกทดสอบข้อมูลใหม่ก่อนผสม"},
+    {s:"ex", q:"Self-training จัดอยู่ในเทคนิคใด?", o:["Weak Supervision","Semi-Supervision","Transfer Learning","Active Learning","Unsupervised Learning"], a:1, e:"ฝึกด้วย label น้อย ทำนาย unlabeled เลือกตัวที่มั่นใจสูงมาเพิ่ม แล้ววนซ้ำ"},
+    {s:"ex", q:"การเพิ่ม noise เล็กน้อยในรูปภาพเพื่อสร้างข้อมูลฝึกใหม่ โดยถือว่า label ไม่เปลี่ยน เป็นวิธีใด?", o:["Keyword heuristic","Perturbation-based method","Zero-shot learning","Database lookup","Quota sampling"], a:1, e:"Semi-supervision แบบ perturbation"},
+    {s:"ex", q:"Labeling Function: \"ถ้าบันทึกแพทย์มีรูปแบบ 'อุณหภูมิสูงกว่า 39°C' → label = ไข้สูง\" เป็น LF ประเภทใด?", o:["Keyword Heuristic","Regular Expression","Database Lookup","Model Output","Self-training"], a:1, e:"ตรวจจับรูปแบบที่ซับซ้อนกว่าคำเดียว ใช้ regex"},
+    {s:"ex", q:"การนำโมเดลต้นน้ำไปใช้กับงานใหม่โดยตรงโดยไม่ฝึกเพิ่ม เรียกว่าอะไร?", o:["Fine-tuning","Zero-shot learning","Self-training","Active learning","Weak supervision"], a:1, e:"Zero-shot ไม่ต้องมี ground truth · Fine-tuning ต้องมีเล็กน้อย"},
+    {s:"ex", q:"ข้อใดไม่ใช่ข้อเสียของการติดฉลากด้วยมือ (Hand labeling)?", o:["ต้นทุนสูง","ปัญหาความเป็นส่วนตัวของข้อมูล","ใช้เวลานาน","ไม่ยืดหยุ่นเมื่อมีการเปลี่ยนแปลง","ปรับขนาดจาก 1K เป็น 1M ได้ง่าย"], a:4, e:"ปรับขนาดง่ายเป็นข้อดีของ programmatic labeling (LF)"},
+    {s:"ex", q:"ใน Active Learning ข้อมูลที่โมเดลเลือกมาให้มนุษย์ label มักอยู่บริเวณใด?", o:["ห่างจาก decision boundary มากที่สุด","ใกล้ decision boundary","อยู่ในคลาสที่มีจำนวนมากที่สุด","เป็น outlier เสมอ","สุ่มแบบ uniform"], a:1, e:"ตัวอย่างใกล้ขอบเขตการตัดสินใจมีความไม่แน่นอนสูง label แล้วช่วยปรับขอบเขตได้มาก"}
+  ]
+});
+TOPICS.push({
+  id: "l10", lec: "Lec 10", cw: "Classwork 11", title: "Class Imbalance",
+  summary: `
+<p>คลาสมีจำนวนไม่เท่ากัน พบใน rare events: fraud 1%, <mark>มะเร็ง 2%</mark> → โมเดล bias ไปทาง majority</p>
+<h4>ปัญหา 3 ข้อ</h4>
+<p>1) โมเดลเรียน minority ไม่พอ (คล้าย few-shot) · 2) ทาย "ปกติ" ตลอด → accuracy สูงแต่ recall = 0 · 3) <b>Asymmetric cost</b>: FN (ป่วยแต่ทายว่าไม่ป่วย) ร้ายแรงกว่า FP</p>
+<p>ผลกระทบมากขึ้นกับ: งานซับซ้อน, multi-class มากกว่า binary · <mark>Deep NN รับมือได้ดีกว่า shallow model</mark> (เรียนรู้ feature representation ซับซ้อนได้)</p>
+<h4>Percentile สูง (P95)</h4>
+<p>การกระจายเบ้ → median ไม่สะท้อน minority จึงดู <mark>P95</mark> · ข้อเสีย: <mark>ไวต่อ outlier</mark>, ไม่สะท้อนค่าทั่วไป, ไม่เสถียรเมื่อ sample น้อย, ตีความยาก, อาจทำให้ FP สูง → ใช้คู่กับ median, IQR</p>
+<h4>Confusion Matrix</h4>
+<table>
+<tr><th></th><th>จริง +</th><th>จริง −</th></tr>
+<tr><th>ทาย +</th><td>TP</td><td>FP (Type I, false alarm)</td></tr>
+<tr><th>ทาย −</th><td>FN (Type II, miss)</td><td>TN</td></tr>
+</table>
+<div class="formula">Accuracy = (TP+TN) / ทั้งหมด<br>Precision = TP / (TP+FP)<br>Recall = Sensitivity = TPR = TP / (TP+FN)<br>Specificity = TN / (TN+FP)<br>FPR = FP / (FP+TN) = 1 − Specificity<br>F1 = 2·P·R / (P+R) &nbsp;(harmonic mean)<br>Balanced Accuracy = (Sensitivity + Specificity) / 2</div>
+<p><b>Accuracy ไม่เหมาะ</b>กับข้อมูลไม่สมดุล · อยากลด FN → เน้น <mark>Recall</mark> (ตรวจมะเร็ง) · Precision สูง Recall ต่ำ = เจอน้อยแต่ที่เจอถูก</p>
+<h4>Threshold, ROC, PR</h4>
+<p>ลด threshold → TPR ↑ และ FPR ↑ · เพิ่ม threshold → ทั้งคู่ ↓ · <b>ROC</b> = กราฟ <mark>TPR vs FPR</mark> ยิ่ง AUC มากยิ่งดี · imbalance มาก ROC-AUC อาจหลอก → ใช้ <mark>PR-AUC</mark></p>
+<h4>Resampling (data-level) — เหมาะกับข้อมูลไม่ซับซ้อน</h4>
+<table>
+<tr><th>Oversampling (เพิ่ม minority)</th><th>Undersampling (ลด majority)</th></tr>
+<tr><td>Random/duplicate: ง่าย แต่<mark>เสี่ยง overfitting</mark><br><b>SMOTE</b>: สร้างจุดสังเคราะห์ระหว่างจุด minority กับเพื่อนบ้าน<br>x_new = x + λ·(x_nb − x), λ∈[0,1]</td>
+<td>เสี่ยง<mark>สูญเสียข้อมูลสำคัญของ majority</mark><br><b>NearMiss-1</b>: <mark>เก็บ majority ที่ใกล้ minority</mark> (ระยะเฉลี่ยน้อยสุด)<br><b>OSS</b> (1-NN): ลบ majority ที่ใกล้ minority/ขอบเขต</td></tr>
+</table>
+<p><b>Two-phase learning</b>: เฟส 1 undersample แล้ว train → เฟส 2 oversample (เช่น SMOTE) แล้ว fine-tune โมเดลเดิม</p>
+<p><b>Cost-sensitive learning</b> (algorithm-level): ปรับ loss ให้ error ที่แพงมีน้ำหนักมากกว่า (weighted loss)</p>`,
+  quiz: [
+    {s:"cw", q:"ปัญหาความไม่สมดุลของคลาส (Class Imbalance) มักพบในกรณีใด", o:["การจำแนกแมว/สุนัขในภาพถ่ายทั่วไป","การตรวจหามะเร็งที่พบเพียง 2% ของประชากร","การทำนายคะแนนสอบนักเรียนทั้งชั้น","การหาค่าเฉลี่ยน้ำหนักของนักศึกษา","การสร้างโมเดลทำนายค่าอุณหภูมิรายวัน"], a:1, e:"rare event: positive 2% / negative 98%"},
+    {s:"cw", q:"เมตริกใดที่ไม่เหมาะสมเมื่อข้อมูลมีความไม่สมดุล", o:["Accuracy","Precision","Recall","F1-score","ROC-AUC"], a:0, e:"Accuracy ถูกครอบงำโดยคลาสใหญ่"},
+    {s:"cw", q:"ใน Confusion Matrix ข้อใดคือการทำนายผิดประเภท False Negative", o:["ทำนายว่า Positive ทั้งที่จริง Negative","ทำนายว่า Negative ทั้งที่จริง Positive","ทำนายถูกทั้ง Positive และ Negative","ทำนายว่า Positive ถูกต้อง","ทำนายว่า Negative ถูกต้อง"], a:1, e:"FN = ทายลบ (Negative) ผิด (False) → จริงๆ เป็นบวก · ตัวเลือกแรกคือ FP"},
+    {s:"cw", q:"สถานการณ์ใดที่ต้องให้ความสำคัญกับ Recall มากกว่า Precision", o:["การแนะนำสินค้าทั่วไป","การตรวจหามะเร็ง","การกรองสแปมอีเมล","การทำนายคะแนนสอบ","การจัดอันดับเว็บไซต์ค้นหา"], a:1, e:"พลาดคนป่วย (FN) ร้ายแรง · กรองสแปมเน้น precision เพราะไม่อยากให้เมลจริงหาย"},
+    {s:"cw", q:"ค่ามัธยฐาน (Median) มักไม่สะท้อนพฤติกรรมของคลาสส่วนน้อย จึงควรพิจารณา", o:["Mean","Mode","95th Percentile","Variance","Standard Deviation"], a:2, e:"Percentile สูงจับหางของการกระจาย (minority) ได้"},
+    {s:"cw", q:"การทำ Oversampling คืออะไร", o:["การตัดข้อมูลคลาสใหญ่ทิ้งบางส่วน","การเพิ่มจำนวนข้อมูลคลาสเล็ก","การสุ่มเลือกข้อมูลใหม่ทั้งหมด","การใช้ threshold สูงขึ้น","การลดขนาด dataset ลง"], a:1, e:"ข้อแรกคือ undersampling"},
+    {s:"cw", q:"เทคนิค SMOTE มีจุดเด่นคืออะไร", o:["คัดเลือกเฉพาะข้อมูล minority class ที่ดีที่สุด","สร้างตัวอย่างใหม่จาก minority class","ลบข้อมูล majority class ที่ซ้ำกัน","เพิ่ม threshold","ใช้โมเดล linear regression"], a:1, e:"Synthetic Minority Over-sampling Technique"},
+    {s:"cw", q:"ROC Curve ใช้แสดงความสัมพันธ์ระหว่างอะไร", o:["Precision และ Recall","Accuracy และ F1-score","True Positive Rate และ False Positive Rate","Precision และ Specificity","Recall และ Accuracy"], a:2, e:"Precision vs Recall คือ PR curve"},
+    {s:"cw", q:"หาก dataset มี Accuracy สูงมากแต่ Recall ของ minority class ต่ำมาก สะท้อนว่า", o:["โมเดล bias ไปที่ majority class","โมเดลทำงานได้ดี","โมเดล overfitting","โมเดล underfitting","ไม่มีผลกระทบ"], a:0, e:"ทายคลาสใหญ่เกือบทั้งหมดก็ได้ accuracy สูงแล้ว"},
+    {s:"cw", q:"Balanced Accuracy หมายถึงอะไร", o:["ค่า Accuracy ปกติ","ค่า Precision","ค่า Recall","ค่า AUC","ค่าเฉลี่ยของ Sensitivity และ Specificity"], a:4, e:"(Sensitivity + Specificity) / 2"},
+    {s:"cw", q:"การใช้ค่า P95 (95th Percentile) แทน Median มีข้อควรระวังคืออะไร", o:["ทำให้โมเดลเสถียรขึ้น","ลด False Negative โดยอัตโนมัติ","ไวต่อ Outliers มาก","เพิ่ม Accuracy เสมอ","ไม่ส่งผลใดๆ"], a:2, e:"ค่าสุดโต่งไม่กี่ค่าดึง P95 พุ่งเกินจริงได้"},
+    {s:"cw", q:"NearMiss-1 ในการ undersampling ทำงานอย่างไร", o:["เลือกข้อมูล minority ที่ใกล้ majority","สุ่ม minority มาขยาย","ใช้ weighted loss","สร้าง synthetic data","เลือกข้อมูล majority ที่ใกล้ minority"], a:4, e:"เก็บ majority ที่ระยะเฉลี่ยถึง minority น้อยที่สุด"},
+    {s:"cw", q:"Cost-sensitive learning คืออะไร", o:["การปรับ loss function ให้คำนึงถึงต้นทุนของ error","การลดค่าใช้จ่ายในการประมวลผล","การเลือกโมเดลที่มีต้นทุนต่ำที่สุด","การ oversample minority class","การใช้ unsupervised learning"], a:0, e:"cost = ความเสียหายของ error ไม่ใช่ค่าคอมพิวเตอร์"},
+    {s:"cw", q:"หากต้องการลด False Negative ให้ต่ำที่สุด metric ใดควรเน้น", o:["Precision","F1-score","Specificity","Recall","Accuracy"], a:3, e:"Recall = TP/(TP+FN) ยิ่ง FN น้อย recall ยิ่งสูง"},
+    {s:"cw", q:"เมื่อข้อมูลมี class imbalance มาก การประเมินด้วย AUC ROC อาจทำให้เข้าใจผิด จึงควรใช้", o:["Accuracy","Mean Absolute Error","Balanced Accuracy","Cohen’s Kappa","PR-AUC (Precision-Recall Curve)"], a:4, e:"ROC ใช้ FPR ซึ่ง TN จำนวนมากทำให้ดูดีเกินจริง · PR โฟกัสคลาสบวก"},
+    {s:"cw", q:"การ undersampling มีข้อเสียสำคัญคือ", o:["ใช้เวลา train นานขึ้น","สูญเสียข้อมูลที่อาจมีประโยชน์จาก majority class","เกิดข้อมูลซ้ำซ้อน","ไม่สามารถใช้กับ deep learning","ไม่ช่วยแก้ imbalance"], a:1, e:"ข้อมูลซ้ำซ้อนเป็นปัญหาของ oversampling"},
+    {s:"cw", q:"หากโมเดลมี Precision สูงแต่ Recall ต่ำ หมายถึง", o:["โมเดลตรวจเจอ positive น้อย แต่ส่วนใหญ่ที่เจอถูกต้อง","โมเดลตรวจเจอ positive มาก แต่ผิดเยอะ","โมเดลมี Accuracy ต่ำ","โมเดลมี overfitting","โมเดลมี bias น้อย"], a:0, e:"Precision สูง = FP น้อย, Recall ต่ำ = FN มาก"},
+    {s:"cw", q:"เทคนิค Two-phase learning สำหรับ imbalance คืออะไร", o:["Train โมเดลสองตัวแล้วเฉลี่ยผล","ใช้ deep learning 2 ชั้น","Train ด้วย accuracy ก่อนแล้วเปลี่ยนเป็น recall","ใช้ confusion matrix 2 แบบ","Train ด้วย undersample ก่อน แล้ว fine-tune ด้วย oversample"], a:4, e:"ตรงตามสไลด์: เฟส 1 undersampling, เฟส 2 oversampling/SMOTE แล้วปรับแต่งโมเดลเดิม"},
+    {s:"cw", q:"Oversampling แบบสุ่ม (Random Oversampling) มีข้อเสียหลักคือ", o:["เสี่ยงเกิด overfitting เพราะข้อมูล minority ถูกทำซ้ำ","สูญเสียข้อมูล minority","ทำให้ training เร็วเกินไป","ไม่ใช้ข้อมูลจริง","ไม่สามารถใช้กับ logistic regression"], a:0, e:"ทำซ้ำจุดเดิม โมเดลจำจุดเหล่านั้น"},
+    {s:"cw", q:"โมเดล deep neural networks มักจัดการ imbalance ได้ดีกว่า shallow models เพราะ", o:["ใช้ memory น้อยกว่า","ไม่ต้องการ resampling","ใช้ metric อัตโนมัติ","สามารถเรียนรู้ feature representation ที่ซับซ้อน","มี Accuracy สูงกว่าเสมอ"], a:3, e:"ตัวเลือกที่มีคำว่า 'เสมอ' มักผิด"},
+    {s:"ex", q:"โมเดลตรวจมะเร็ง: TP = 40, FN = 10, FP = 20, TN = 930 ค่า Recall เท่ากับเท่าไร?", o:["0.67","0.80","0.97","0.73","0.98"], a:1, e:"Recall = 40 / (40 + 10) = 0.80"},
+    {s:"ex", q:"จากข้อมูลเดิม (TP = 40, FN = 10, FP = 20, TN = 930) ค่า Precision เท่ากับเท่าไร?", o:["0.40","0.67","0.80","0.95","0.97"], a:1, e:"Precision = 40 / (40 + 20) = 0.667"},
+    {s:"ex", q:"จากข้อมูลเดิม (TP = 40, FN = 10, FP = 20, TN = 930) ค่า Accuracy เท่ากับเท่าไร?", o:["0.80","0.89","0.93","0.97","0.99"], a:3, e:"(40 + 930) / 1000 = 0.97 — สูงทั้งที่พลาดคนป่วย 10 คน"},
+    {s:"ex", q:"Precision = 0.5 และ Recall = 1.0 ค่า F1 เท่ากับเท่าไร?", o:["0.50","0.67","0.75","0.80","1.00"], a:1, e:"F1 = 2(0.5)(1.0) / (1.5) = 0.667 · harmonic mean ต่ำกว่าค่าเฉลี่ยธรรมดา (0.75)"},
+    {s:"ex", q:"False Positive ใน Confusion Matrix เรียกอีกชื่อว่าอะไร?", o:["Type I error / false alarm","Type II error / miss","Hit","Correct rejection","Sensitivity"], a:0, e:"FN = Type II error (miss)"},
+    {s:"ex", q:"ถ้าลด threshold ของโมเดล (เช่น จาก 0.5 เป็น 0.3) จะเกิดอะไรขึ้น?", o:["TPR ลดลง, FPR ลดลง","TPR เพิ่มขึ้น, FPR เพิ่มขึ้น","TPR เพิ่มขึ้น, FPR ลดลง","TPR ลดลง, FPR เพิ่มขึ้น","ไม่เปลี่ยนแปลง"], a:1, e:"ทายบวกง่ายขึ้น → จับบวกได้มากขึ้น แต่ false alarm ก็มากขึ้น"},
+    {s:"ex", q:"SMOTE: จุด A = (1, 2) เพื่อนบ้าน B = (2, 3) สุ่มได้ λ = 0.4 จุดใหม่คืออะไร?", o:["(1.4, 2.4)","(1.5, 2.5)","(0.4, 0.4)","(2.4, 3.4)","(1.6, 2.6)"], a:0, e:"x = 1 + 0.4(2 − 1) = 1.4, y = 2 + 0.4(3 − 2) = 2.4"},
+    {s:"ex", q:"เปรียบเทียบ NearMiss-1 กับ OSS (1-NN) ข้อใดถูกต้อง?", o:["ทั้งคู่เป็น oversampling","NearMiss-1 เก็บจุด majority ที่ใกล้ minority ส่วน OSS ลบจุด majority ที่ใกล้ minority","NearMiss-1 ลบจุดที่ใกล้ minority ส่วน OSS เก็บไว้","ทั้งคู่สร้าง synthetic data","OSS ใช้ chi-square"], a:1, e:"ตัวอย่างสไลด์: NearMiss-1 เหลือ B4–B7, OSS เหลือ B1–B4"},
+    {s:"ex", q:"ข้อใดเป็นแนวทางแก้ imbalance ระดับข้อมูล (data-level)?", o:["Cost-sensitive learning","Weighted loss","Resampling (oversampling/undersampling)","เปลี่ยนเป็น deep learning","ปรับ learning rate"], a:2, e:"Cost-sensitive / weighted loss เป็นระดับอัลกอริทึม"},
+    {s:"ex", q:"ข้อใดได้รับผลกระทบจาก class imbalance มากที่สุด?", o:["งานง่ายแบบ binary ด้วย deep NN","งานซับซ้อนแบบ multi-class ด้วย shallow model","งาน regression","งาน binary ที่ข้อมูลสมดุล","งานจัดกลุ่มแบบ unsupervised"], a:1, e:"งานซับซ้อน > ง่าย, multi-class > binary, shallow แย่กว่า deep"},
+    {s:"ex", q:"โมเดลวินิจฉัยโรคทาย \"ปกติ\" ทุกเคส บนข้อมูลที่ป่วย 5% ค่า Accuracy และ Recall เป็นเท่าไร?", o:["Accuracy 5%, Recall 100%","Accuracy 95%, Recall 0%","Accuracy 95%, Recall 95%","Accuracy 50%, Recall 50%","Accuracy 100%, Recall 0%"], a:1, e:"ถูก 95% จากเคสปกติ แต่ไม่เจอคนป่วยเลย"},
+    {s:"ex", q:"Precision, Recall, F1 เป็นตัววัดแบบไม่สมมาตร หมายความว่าอะไร?", o:["ค่าเปลี่ยนไปตามคลาสที่กำหนดเป็น positive","ค่าเท่ากันเสมอไม่ว่าคลาสไหนเป็น positive","ใช้ได้เฉพาะข้อมูลสมดุล","คำนวณจาก TN เท่านั้น","ค่าอยู่ระหว่าง −1 ถึง 1"], a:0, e:"สไลด์: ให้ CANCER เป็นบวก F1 ของโมเดล A = 0.17 แต่ให้ NORMAL เป็นบวกได้ 0.95"}
+  ]
+});
+
+TOPICS.push({
+  id: "l11", lec: "Lec 11", cw: "ไม่มี Classwork", title: "Missing Values & Outliers",
+  summary: `
+<p class="note">หัวข้อนี้ไม่มี classwork แต่อยู่ในขอบเขตสอบ และอาจารย์บอกว่าวิธีทำมีเรื่อง <b>outlier</b> ด้วย</p>
+<p><b>Feature engineering</b> = คัดเลือก ปรับปรุง สร้าง feature จากข้อมูลดิบ · Deep learning ช่วยดึง feature เองได้ แต่ยังแทนการออกแบบด้วยมือไม่ได้ทั้งหมด</p>
+<p><b>Feature improvement</b>: Cleaning (impute missing, treat outliers) · Augmenting (normalize, discretize, transform, encode)</p>
+<h4>กลไกการขาดหาย</h4>
+<table>
+<tr><th>MCAR</th><th>MAR</th><th>NMAR / MNAR</th></tr>
+<tr><td>หายแบบสุ่มสมบูรณ์ ไม่สัมพันธ์กับอะไร</td><td>สัมพันธ์กับข้อมูลที่สังเกตได้</td><td>สัมพันธ์กับค่าที่หายไปเอง</td></tr>
+</table>
+<h4>วิธีจัดการ</h4>
+<table>
+<tr><th>วิธี</th><th>ใช้เมื่อ / หมายเหตุ</th></tr>
+<tr><td>Deletion (ลบแถว/คอลัมน์)</td><td>หายน้อย + MCAR · เสียข้อมูล, ไม่ใช่ MCAR อาจเกิด bias</td></tr>
+<tr><td>Mean / Median</td><td>MCAR · <mark>ปกติใช้ mean, เบ้หรือมี outlier ใช้ median</mark> · หาย &gt;5% variance บิดเบือน</td></tr>
+<tr><td>End value</td><td>NMAR · ปกติใช้ mean ± 3SD, เบ้ใช้ Q3 + 1.5·IQR / Q1 − 1.5·IQR</td></tr>
+<tr><td>Arbitrary value</td><td>NMAR · ใส่ 0, 999, −999, −1 หรือ "Missing" สำหรับหมวดหมู่</td></tr>
+<tr><td>Frequent category (mode)</td><td>ตัวแปรหมวดหมู่, MCAR</td></tr>
+<tr><td>KNN imputation</td><td>หา K แถวที่ใกล้สุด (Euclidean/Manhattan) แล้วเฉลี่ย (mean/median/mode)</td></tr>
+<tr><td>Regression imputation</td><td>ตัวเลข → linear regression, หมวดหมู่ → logistic regression</td></tr>
+</table>
+<h4>Outlier</h4>
+<p>mean และ variance ไวต่อ outlier · โมเดลที่ไวต่อ outlier: <b>Linear Regression, AdaBoost</b></p>
+<div class="formula">Z = (x − x̄) / σ &nbsp;→ |Z| &gt; 3 ถือเป็น outlier<br>IQR = Q3 − Q1<br>ขอบบน = Q3 + d·IQR, ขอบล่าง = Q1 − d·IQR (d = 1.5 หรือ 3)<br>Gaussian: ขอบ = mean ± 3·SD</div>
+<p><b>จัดการ</b>: แปลงตัวแปร (log, sqrt) · ถือเป็น missing · ลบ · แทนค่า · <mark>Winsorization</mark> = ค่าที่เกินขอบถูกแทนด้วยค่าขอบนั้น (ไม่ต้องลบทิ้ง)</p>
+<p class="note">สไลด์ตัวอย่าง Z-score (คะแนน 120) คำนวณได้ Z = 2.33 แต่สรุปว่าเป็น outlier ซึ่งขัดกับเกณฑ์ ±3 ของสไลด์เอง ถ้าเจอในข้อสอบให้ยึดเกณฑ์ |Z| &gt; 3</p>`,
+  quiz: [
+    {s:"ex", q:"ข้อมูลที่หายไปแบบสุ่มสมบูรณ์ ไม่มีความสัมพันธ์กับข้อมูลอื่นใดในชุดข้อมูล เรียกว่าอะไร?", o:["MAR","MCAR","NMAR","MNAR","Outlier"], a:1, e:"Missing Completely At Random"},
+    {s:"ex", q:"ข้อมูลตัวเลขมีการกระจายแบบเบ้และมี outlier ควรเติมค่าที่หายไปด้วยอะไร?", o:["Mean","Median","Mode","0","Max"], a:1, e:"Median ไม่ถูก outlier ดึง"},
+    {s:"ex", q:"ตัวแปรเชิงหมวดหมู่ (เช่น สีรถ) มีค่าหาย ควรใช้วิธีใด?", o:["Mean imputation","Median imputation","Frequent category (mode) imputation","Linear regression","Z-score"], a:2, e:"Mean/median ใช้ได้กับตัวเลขเท่านั้น"},
+    {s:"ex", q:"การเติมค่าเฉลี่ยเมื่อข้อมูลหายไปมากกว่า 5% มีผลเสียอย่างไร?", o:["ค่าเฉลี่ยเปลี่ยน","ความแปรปรวนของตัวแปรบิดเบือน","ข้อมูลกลายเป็น NMAR","ทำให้เกิด hash collision","ไม่มีผลเสีย"], a:1, e:"เติมค่าเดียวกันซ้ำๆ ทำให้ variance ลดลงผิดจริง และกระทบ covariance"},
+    {s:"ex", q:"End value imputation สำหรับตัวแปรที่แจกแจงแบบปกติ ใช้ค่าใดแทน?", o:["Median","Mean ± 3 SD","Q3 + 1.5·IQR","Mode","0"], a:1, e:"ถ้าเบ้ใช้กฎ IQR แทน"},
+    {s:"ex", q:"Arbitrary value imputation และ End value imputation อยู่บนสมมติฐานใด?", o:["MCAR","MAR","NMAR (ข้อมูลไม่ได้หายแบบสุ่ม)","ข้อมูลแจกแจงปกติ","ไม่มี outlier"], a:2, e:"การหายมีความหมาย จึงทำเครื่องหมายไว้ด้วยค่าพิเศษ"},
+    {s:"ex", q:"Regression imputation ถ้าตัวแปรที่ต้องเติมเป็นหมวดหมู่ ควรใช้โมเดลใด?", o:["Linear regression","Logistic regression","K-means","SMOTE","Box-Cox"], a:1, e:"ตัวเลข → linear, หมวดหมู่ → logistic"},
+    {s:"ex", q:"เกณฑ์ทั่วไปในการตัดสินว่าเป็น outlier ด้วย Z-score คืออะไร?", o:["|Z| > 1","|Z| > 2","|Z| > 3","Z < 0","Z = 0"], a:2, e:"ห่างจากค่าเฉลี่ยเกิน 3 ส่วนเบี่ยงเบนมาตรฐาน"},
+    {s:"ex", q:"μ = 60, σ = 5 ค่า x = 78 มี Z-score เท่าไร และเป็น outlier หรือไม่?", o:["Z = 3.6 เป็น outlier","Z = 3.6 ไม่เป็น outlier","Z = 1.8 ไม่เป็น outlier","Z = 18 เป็น outlier","Z = −3.6 เป็น outlier"], a:0, e:"(78 − 60) / 5 = 3.6 > 3"},
+    {s:"ex", q:"Q1 = 20, Q3 = 40 ใช้ d = 1.5 ขีดจำกัดบนคือเท่าไร?", o:["50","60","70","40","100"], a:2, e:"IQR = 20 → 40 + 1.5(20) = 70"},
+    {s:"ex", q:"Winsorization จัดการ outlier อย่างไร?", o:["ลบแถวที่มี outlier ออก","แทนค่าที่เกินขีดจำกัดด้วยค่าขีดจำกัดนั้น","แทน outlier ด้วยค่าเฉลี่ย","แปลงด้วย log","เพิ่มข้อมูลด้วย SMOTE"], a:1, e:"ตัวอย่างสไลด์: 1000 เกินขอบบน 175 → แทนด้วย 175"},
+    {s:"ex", q:"ข้อดีของ Winsorization ด้วยกฎ IQR เทียบกับแบบ Gaussian คืออะไร?", o:["ไม่ต้องสมมติว่าข้อมูลแจกแจงแบบปกติ","คำนวณง่ายกว่าเสมอ","ไม่เสียความแม่นยำเลย","ไม่ต้องเลือกค่า d","ใช้ได้เฉพาะข้อมูลปกติ"], a:0, e:"IQR อิงควอไทล์ จึงทนต่อ outlier และไม่ต้องสมมติ normal"},
+    {s:"ex", q:"โมเดลใดไวต่อ outlier ตามที่สไลด์ยกตัวอย่าง?", o:["Decision Tree และ Random Forest","Linear Regression และ AdaBoost","Naïve Bayes","K-means เท่านั้น","ไม่มีโมเดลใดไว"], a:1, e:"ทั้งสองถูกดึงโดยค่าที่ผิดปกติ"},
+    {s:"ex", q:"KNN imputation ใช้อะไรวัดความคล้ายคลึงระหว่างแถว?", o:["Chi-square","Euclidean หรือ Manhattan distance","Hash function","Gini index","p-value"], a:1, e:"หา K แถวที่ใกล้สุด แล้วเฉลี่ยค่าของคอลัมน์ที่หาย"},
+    {s:"ex", q:"การลบแถวที่มีค่าหายไปเหมาะกับกรณีใดที่สุด?", o:["ข้อมูลหายมากและเป็น NMAR","ข้อมูลหายน้อยมากและเป็น MCAR","ข้อมูลมีตัวอย่างน้อย","ข้อมูลเป็น time series","ข้อมูลเป็นหมวดหมู่"], a:1, e:"ถ้าไม่ใช่ MCAR การลบอาจทำให้เกิด bias"},
+    {s:"ex", q:"Normalize, Discretize, Transform และ Encode จัดอยู่ใน Feature Improvement ส่วนใด?", o:["Cleaning","Augmenting","Sampling","Labeling","Deletion"], a:1, e:"Cleaning = impute missing + treat outliers"},
+    {s:"ex", q:"ประโยค \"แมว ของ ฉัน น่ารัก\" (4 คำ) มี bigram กี่ชุด?", o:["2","3","4","6","1"], a:1, e:"แมว-ของ, ของ-ฉัน, ฉัน-น่ารัก · จำนวน n-gram = จำนวนคำ − n + 1"},
+    {s:"ex", q:"ข้อมูลเป็นอนุกรมเวลา (time series) มีค่าหาย ควรใช้ค่าใดแทนที่เหมาะสมตามสไลด์?", o:["ค่าสุดท้ายก่อนหน้า หรือค่าแรกที่มีอยู่ถัดไป","Mode","−999","ค่าสูงสุด","ลบทั้งคอลัมน์"], a:0, e:"ใช้ความต่อเนื่องของเวลา (forward/backward fill)"}
+  ]
+});
+TOPICS.push({
+  id: "l12", lec: "Lec 12", cw: "Classwork 12 และ 13", title: "Discretization & Encoding",
+  summary: `
+<h4>Feature Discretization</h4>
+<p>แปลงค่าต่อเนื่อง → ช่วง (bin) · วัตถุประสงค์: <mark>ลดความซับซ้อน เข้าใจง่าย</mark>, ช่วย Decision Tree / Naïve Bayes, ตีความง่าย ("อายุ 20–30") · ช่วยจัดการ outlier · ผลเสีย: <mark>Information loss</mark></p>
+<table>
+<tr><th>วิธี</th><th>หลักการ</th><th>ข้อดี / ข้อเสีย</th></tr>
+<tr><td colspan="3"><b>Unsupervised</b> (ไม่ใช้ target)</td></tr>
+<tr><td>Equal Width</td><td>w = (max − min) / k</td><td>ง่าย, <mark>เหมาะข้อมูลกระจายสม่ำเสมอ</mark> / ถ้าไม่สม่ำเสมอบาง bin แน่นหรือว่าง</td></tr>
+<tr><td>Equal Frequency</td><td>f = m / k ตัวต่อ bin (ต้องเรียงข้อมูลก่อน)</td><td><mark>จัดการข้อมูลกระจายไม่สม่ำเสมอได้ดี</mark> / ความกว้าง bin ไม่เท่ากัน</td></tr>
+<tr><td>K-Means</td><td>จัดกลุ่มแล้วใช้หมายเลขกลุ่มเป็นค่าใหม่</td><td>สะท้อนโครงสร้างข้อมูล / <mark>ต้องกำหนด K</mark></td></tr>
+<tr><td colspan="3"><b>Supervised</b> (ใช้ target)</td></tr>
+<tr><td>Chi-Merge</td><td>รวม bin ที่ติดกันถ้า <mark>Chi-square</mark> บอกว่าไม่ต่างอย่างมีนัยสำคัญ</td><td>น่าเชื่อถือ / ต้องกำหนด p-value, ใช้เวลา</td></tr>
+<tr><td>Decision Tree</td><td>ใช้จุดแบ่งของต้นไม้ (Gini, Entropy)</td><td>bin เหมาะกับการจำแนก / <mark>overfitting ถ้าไม่คุมความลึก</mark></td></tr>
+</table>
+<h4>Categorical Encoding (K หมวด)</h4>
+<table>
+<tr><th>วิธี</th><th>คอลัมน์</th><th>หมายเหตุ</th></tr>
+<tr><td>Ordinal</td><td>1</td><td>เหมาะข้อมูลมีลำดับ (ต่ำ<กลาง<สูง) · <mark>ถ้าไม่มีลำดับจริง โมเดลเข้าใจผิด</mark></td></tr>
+<tr><td>One-hot</td><td>K</td><td>เหมาะข้อมูลไม่มีลำดับ · <mark>หมวดเยอะ → มิติระเบิด</mark> (curse of dimensionality), multicollinearity</td></tr>
+<tr><td>Dummy</td><td><mark>K − 1</mark></td><td>หมวดฐาน = 0 ทั้งหมด · ลด multicollinearity</td></tr>
+<tr><td>Effect</td><td>K − 1</td><td>หมวดฐาน = <mark>−1</mark> ทั้งหมด · ช่วยวิเคราะห์ทางสถิติ</td></tr>
+<tr><td>Feature Hashing</td><td>B (กำหนดเอง)</td><td><mark>เหมาะหมวดจำนวนมาก</mark> · เสี่ยง <mark>Hash collision</mark> · hash % 10 ได้ 0–9</td></tr>
+</table>
+<p>ตัวอย่างเพศ (ชาย = ฐาน): Dummy → ชาย 0, หญิง 1 · Effect → ชาย −1, หญิง 1</p>`,
+  quiz: [
+    {s:"cw", q:"วัตถุประสงค์หลักของ Feature Discretization คือข้อใด?", o:["ลดจำนวนมิติของข้อมูล (Dimensionality Reduction)","ลดความซับซ้อนของข้อมูล และเพิ่มความเข้าใจง่ายของโมเดล","เพิ่มจำนวนค่าของคุณลักษณะ","ทำให้โมเดลซับซ้อนมากขึ้น","ใช้แทนการทำ Normalization"], a:1, e:"Discretization ไม่ได้ลดจำนวนคอลัมน์ แต่ลดจำนวนค่าที่เป็นไปได้"},
+    {s:"cw", q:"ข้อใดเป็นผลเสียที่อาจเกิดจาก Feature Discretization?", o:["ข้อมูลสูญเสียความละเอียด (Information Loss)","โมเดลตีความง่ายขึ้น","ช่วยจัดการ Outliers","ลดความซับซ้อนของข้อมูล","โมเดล Naïve Bayes ทำงานได้ดีขึ้น"], a:0, e:"ตัวเลือกอื่นเป็นข้อดี"},
+    {s:"cw", q:"Equal Interval Width Discretization เหมาะสมที่สุดกับข้อมูลลักษณะใด?", o:["ข้อมูลที่กระจายไม่สม่ำเสมอ","ข้อมูลเชิงหมวดหมู่ที่มีลำดับ","ข้อมูลที่กระจายตัวสม่ำเสมอ","ข้อมูลที่มี Outlier จำนวนมาก","ข้อมูลข้อความ (Text)"], a:2, e:"ถ้าไม่สม่ำเสมอ ควรใช้ Equal Frequency"},
+    {s:"cw", q:"ถ้าช่วงค่าของข้อมูลคือ [10–50] และต้องการแบ่งเป็น 4 bin แบบ Equal Interval Width จะได้ bin ที่มีความกว้างเท่าไร?", o:["5","10","20","25","40"], a:1, e:"w = (50 − 10) / 4 = 10"},
+    {s:"cw", q:"ข้อใดคือข้อดีของ Equal Frequency Interval Discretization?", o:["ขอบเขต bin เท่ากันเสมอ","จัดการข้อมูลกระจายไม่สม่ำเสมอได้ดี","ไม่สูญเสียความหมายข้อมูล","ไม่ต้องเรียงข้อมูลก่อน","ลดปัญหา Hash Collision"], a:1, e:"ต้องเรียงข้อมูลก่อน และขอบเขต bin ไม่เท่ากัน"},
+    {s:"cw", q:"การใช้ K-Means Clustering สำหรับการทำ Discretization ต้องกำหนดสิ่งใดล่วงหน้า?", o:["ระดับนัยสำคัญ (p-value)","จำนวนกลุ่ม K","ค่าเฉลี่ยและส่วนเบี่ยงเบนมาตรฐาน","ค่า Minimum และ Maximum","ค่าความถี่ของข้อมูล"], a:1, e:"p-value ต้องกำหนดใน Chi-Merge"},
+    {s:"cw", q:"Chi-Merge Discretization ใช้เกณฑ์ทางสถิติใดเพื่อตัดสินใจรวม bin?", o:["Gini Index","Entropy","Chi-square Test","Euclidean Distance","Variance Ratio"], a:2, e:"Gini/Entropy ใช้ใน Decision Tree discretization"},
+    {s:"cw", q:"ข้อจำกัดสำคัญของ Decision Tree Discretization คืออะไร?", o:["ใช้กับข้อมูลตัวเลขไม่ได้","อาจเกิด Overfitting หากไม่ควบคุมความลึกของต้นไม้","ไม่สามารถใช้ Target Variable ได้","ไม่สามารถใช้ร่วมกับ Chi-square ได้","ต้องเลือกจำนวน K ล่วงหน้า"], a:1, e:"ต้นไม้ลึกเกิน → bin ละเอียดเกินจนจำข้อมูลฝึก"},
+    {s:"cw", q:"Ordinal Encoding อาจทำให้โมเดลเข้าใจผิดได้ในกรณีใด?", o:["ข้อมูลมี Outlier","ข้อมูลไม่มีลำดับที่แท้จริง แต่ถูกเข้ารหัสเป็นตัวเลขลำดับ","ข้อมูลมี missing value","ข้อมูลเป็นตัวเลขจริง (Continuous)","ข้อมูลมีค่าเฉลี่ยไม่ชัดเจน"], a:1, e:"เช่น จังหวัด 1, 2, 3 โมเดลคิดว่า 3 > 1"},
+    {s:"cw", q:"One-hot Encoding มักมีปัญหาใหญ่เมื่อใด?", o:["มีจำนวนหมวดหมู่มาก","มี Outlier","ใช้กับข้อมูลเชิงลำดับ","ใช้กับข้อมูลตัวเลข","จำนวนข้อมูลน้อย"], a:0, e:"K หมวดได้ K คอลัมน์ → curse of dimensionality"},
+    {s:"cw", q:"Dummy Coding แตกต่างจาก One-hot Encoding อย่างไร?", o:["ใช้คอลัมน์น้อยกว่า 1 คอลัมน์","ใช้ K-1 คอลัมน์แทน K","ใช้ค่าลบแทนค่า 0","ไม่เหมาะกับข้อมูลที่มี Outlier","ต้องทำ Normalization ก่อน"], a:1, e:"หมวดฐานแทนด้วย 0 ทั้งหมด"},
+    {s:"cw", q:"Effect Coding ต่างจาก Dummy Coding อย่างไร?", o:["ใช้ K คอลัมน์เต็ม","ใช้ -1 แทนหมวดหมู่ฐาน","ใช้ Hash Function แทนค่า","ไม่สามารถใช้กับข้อมูลสองหมวดหมู่","ไม่ช่วยลด Multicollinearity"], a:1, e:"ทั้งคู่ใช้ K − 1 คอลัมน์"},
+    {s:"cw", q:"Feature Hashing มีความเสี่ยงใด?", o:["Multicollinearity","Overfitting","Hash Collision (ค่าแฮชซ้ำกัน)","Loss of Interpretability","Dimensionality Reduction"], a:2, e:"หมวดต่างกันอาจได้ค่าแฮชเดียวกัน เช่น สหรัฐฯ และจีนได้ 2 ทั้งคู่"},
+    {s:"cw", q:"ข้อใดคือประโยชน์ของการใช้ Feature Hashing?", o:["เหมาะกับข้อมูลที่มีหมวดหมู่จำนวนมาก","ลดค่าเฉลี่ยของข้อมูล","ป้องกัน Overfitting ได้","ทำให้ข้อมูล numerical ทั้งหมด","ทำให้การตีความง่ายขึ้นเสมอ"], a:0, e:"กำหนดจำนวน bin เองได้ ไม่โตตามจำนวนหมวด"},
+    {s:"cw", q:"หากข้อมูลไม่มีลำดับที่แน่นอน (เช่น สาขาวิชา) วิธี Encoding ที่เหมาะสมที่สุดคืออะไร?", o:["Ordinal Encoding","One-hot Encoding","Dummy Coding","Effect Coding","Feature Hashing"], a:1, e:"One-hot เหมาะกับข้อมูลหมวดหมู่ที่ไม่มีลำดับ"},
+    {s:"ex", q:"ข้อมูลมีค่า 0 ถึง 100 แบ่ง Equal Width 5 bin แต่ละ bin กว้างเท่าไร?", o:["5","10","20","25","50"], a:2, e:"(100 − 0) / 5 = 20"},
+    {s:"ex", q:"ข้อมูล 20 ตัวอย่าง แบ่ง Equal Frequency 4 bin แต่ละ bin มีกี่ตัวอย่าง?", o:["4","5","10","16","20"], a:1, e:"f = m / k = 20 / 4 = 5"},
+    {s:"ex", q:"ข้อมูล min = 15, max = 75 แบ่ง Equal Width 3 bin ค่า 52 อยู่ bin ใด?", o:["Bin 1: [15, 35]","Bin 2: [35, 55]","Bin 3: [55, 75]","อยู่นอกช่วง","Bin 1 และ 2"], a:1, e:"w = 60 / 3 = 20 → [15, 35], [35, 55], [55, 75]"},
+    {s:"ex", q:"วิธี Discretization ใดเป็นแบบ Supervised (ใช้ตัวแปรเป้าหมาย)?", o:["Equal Width และ Equal Frequency","K-Means","Chi-Merge และ Decision Tree","One-hot","Feature Hashing"], a:2, e:"Equal Width, Equal Frequency, K-Means เป็น unsupervised"},
+    {s:"ex", q:"ตัวแปร \"ภาค\" มี 4 หมวด (เหนือ, กลาง, อีสาน, ใต้) ใช้ One-hot / Dummy / Effect จะได้กี่คอลัมน์ตามลำดับ?", o:["4 / 4 / 4","4 / 3 / 3","3 / 3 / 4","4 / 3 / 4","1 / 3 / 3"], a:1, e:"One-hot = K, Dummy = K − 1, Effect = K − 1"},
+    {s:"ex", q:"ข้อมูลเพศ ให้ \"ชาย\" เป็นหมวดฐาน ใช้ Effect Coding \"ชาย\" และ \"หญิง\" มีค่าเท่าไร?", o:["ชาย 0, หญิง 1","ชาย 1, หญิง 0","ชาย −1, หญิง 1","ชาย 1, หญิง −1","ชาย 0, หญิง −1"], a:2, e:"ถ้าเป็น Dummy: ชาย 0, หญิง 1"},
+    {s:"ex", q:"ข้อมูลที่เหมาะกับ Ordinal Encoding ที่สุดคือข้อใด?", o:["ชื่อจังหวัด","สีรถ","ระดับความพึงพอใจ ต่ำ / ปานกลาง / สูง","สาขาวิชา","ชื่อประเทศ"], a:2, e:"มีลำดับจริง จึงแปลงเป็น 1, 2, 3 ได้"},
+    {s:"ex", q:"Dummy Coding ใช้ K − 1 คอลัมน์ เพื่อแก้ปัญหาใดของ One-hot?", o:["Hash collision","Multicollinearity","Information loss","Overfitting ของต้นไม้","Missing value"], a:1, e:"คอลัมน์ one-hot ครบ K ตัวรวมกันได้ 1 เสมอ จึงสัมพันธ์เชิงเส้นกัน"},
+    {s:"ex", q:"Feature Hashing ใช้ hash(x) % 10 ค่าที่ได้จะอยู่ในช่วงใด?", o:["1–10","0–9","0–10","−10 ถึง 10","ไม่จำกัด"], a:1, e:"เศษจากการหาร 10 คือ 0 ถึง 9"},
+    {s:"ex", q:"ผลลัพธ์ของ K-Means Discretization คือค่าใด?", o:["ค่าเฉลี่ยของแต่ละกลุ่ม","หมายเลขกลุ่ม (cluster number) เป็นค่าหมวดหมู่ใหม่","ค่า z-score","ค่าแฮช","ค่า chi-square"], a:1, e:"ตัวอย่างสไลด์ได้ 1, 2, 2, 2, 3, 3, …"},
+    {s:"ex", q:"โมเดลใดมักทำงานได้ดีกับข้อมูลที่ผ่าน Discretization แล้ว?", o:["Linear Regression และ SVM","Decision Tree และ Naïve Bayes","KNN เท่านั้น","Deep Neural Network เท่านั้น","ไม่มีโมเดลใดได้ประโยชน์"], a:1, e:"ตามสไลด์วัตถุประสงค์ของ discretization"}
+  ]
+});
+
+TOPICS.push({
+  id: "l13", lec: "Lec 13", cw: "Classwork 14", title: "Feature Scaling & Transformation",
+  summary: `
+<p>Scaling ทำให้ <mark>feature เปรียบเทียบกันได้</mark> ในโมเดล ML</p>
+<div class="formula">Standardization (Z-score): x' = (x − μ) / σ → mean 0, SD 1<br>Min-Max: x' = (x − min) / (max − min) → 0 ถึง 1<br>Mean Normalization: x' = (x − mean) / (max − min) → ประมาณ −1 ถึง 1, กลาง 0<br>Max Abs: x' = x / max|x| → −1 ถึง 1<br>Unit length: x' = x / ‖x‖ (L1 = Σ|xᵢ|, L2 = √Σxᵢ²) → ขนาดเวกเตอร์ = 1</div>
+<table>
+<tr><th>วิธี</th><th>จุดเด่น</th><th>ข้อควรระวัง</th></tr>
+<tr><td>Standardization</td><td>ทุก feature มีส่วนร่วมเท่ากัน</td><td>—</td></tr>
+<tr><td>Min-Max</td><td>ช่วง 0–1 รักษาความสัมพันธ์เชิงเส้น</td><td><mark>outlier ทำให้ข้อมูลส่วนใหญ่ถูกบีบ</mark> (ผลกระทบมาก)</td></tr>
+<tr><td>Mean Norm.</td><td>กลางอยู่ที่ 0</td><td>ช่วงแคบมาก → ค่าพุ่ง</td></tr>
+<tr><td>Max Abs</td><td><mark>รักษาทิศทาง (เครื่องหมาย) และค่า 0</mark> · outlier กระทบน้อยกว่า Min-Max</td><td>max|x| เล็กมาก → ค่าพุ่ง</td></tr>
+<tr><td>Unit length</td><td>รักษาทิศทางเวกเตอร์ เหมาะ KNN, SVM</td><td>เวกเตอร์ศูนย์ หารไม่ได้</td></tr>
+</table>
+<p class="note">สไลด์ตัวอย่าง [20, 30, 40, 50, 60] ใช้ σ = √200 = 14.14 (หารด้วย n) แม้สูตรเขียน n − 1 · ในข้อสอบถ้าโจทย์ให้ σ มา ใช้ตามที่ให้</p>
+<h4>Transformation (ทำให้ใกล้ปกติ ลดความเบ้)</h4>
+<table>
+<tr><th>วิธี</th><th>สูตร</th><th>ใช้กับ / ข้อจำกัด</th></tr>
+<tr><td>Log</td><td>log x</td><td><mark>เบ้ขวา ช่วงค่ากว้าง</mark> (1, 10, 100, 1000 → 0, 1, 2, 3) · <mark>ต้องเป็นบวก</mark></td></tr>
+<tr><td>Reciprocal</td><td>1/x</td><td>เบ้ขวาสูง · <mark>ใช้กับ 0 ไม่ได้</mark> · กลับลำดับค่า</td></tr>
+<tr><td>Square-root</td><td>x^½ (หรือ x^⅓)</td><td><mark>variance แปรตามค่าเฉลี่ย</mark> · ต้องเป็นบวก</td></tr>
+<tr><td>Box-Cox</td><td>(x^λ − 1)/λ, λ = 0 → ln x</td><td><mark>ข้อมูลบวกเท่านั้น</mark> · λ หาด้วย MLE (−5 ถึง 5)</td></tr>
+<tr><td>Yeo-Johnson</td><td>ขยายจาก Box-Cox</td><td><mark>ใช้กับค่าลบและศูนย์ได้</mark></td></tr>
+</table>`,
+  quiz: [
+    {s:"cw", q:"จุดประสงค์หลักของการทำ Feature Scaling คืออะไร?", o:["ลดจำนวนตัวแปรในข้อมูล","ทำให้ข้อมูลมีค่าอยู่ระหว่าง 0 ถึง 10","ทำให้คุณลักษณะเปรียบเทียบกันได้ในโมเดล ML","ลบค่าผิดปกติออกจากข้อมูล","ทำให้ข้อมูลกลายเป็น Normal Distribution"], a:2, e:"ตรงกับประโยคแรกของสไลด์"},
+    {s:"cw", q:"Standardization คือการปรับข้อมูลให้อยู่ในรูปแบบใด?", o:["ค่าเฉลี่ย = 0, ค่าเบี่ยงเบนมาตรฐาน = 1","ค่าต่ำสุด = 0, ค่าสูงสุด = 1","ค่าเฉลี่ย = 1, ค่าเบี่ยงเบนมาตรฐาน = 0","ค่าต่ำสุด = -1, ค่าสูงสุด = 1","ค่ามากที่สุด = 100"], a:0, e:"ตัวเลือกที่ 2 คือ Min-Max"},
+    {s:"cw", q:"สูตรการคำนวณ Z-score ในการทำ Standardization คืออะไร?", o:["x' = x / σ","x' = (x - μ) / σ","x' = (x - min(X)) / max(X)","x' = ln(x)","x' = sqrt(x)"], a:1, e:"ลบค่าเฉลี่ย หารส่วนเบี่ยงเบนมาตรฐาน"},
+    {s:"cw", q:"Normalization แบบ Min-Max จะทำให้ข้อมูลอยู่ในช่วงใด?", o:["-1 ถึง 1","0 ถึง 1","-∞ ถึง ∞","ค่าเฉลี่ย 0","ค่าเบี่ยงเบนมาตรฐาน 1"], a:1, e:"min → 0, max → 1"},
+    {s:"cw", q:"Mean Normalization แตกต่างจาก Min-Max Normalization อย่างไร?", o:["ใช้ค่าเฉลี่ยในการปรับแทนที่จะใช้ค่าสูงสุดหรือต่ำสุด","ใช้ Log Transformation","ใช้ Square-root","ใช้ Reciprocal","ใช้การสุ่มข้อมูล"], a:0, e:"ตัวเศษเปลี่ยนจาก (x − min) เป็น (x − mean) ตัวส่วนยังเป็น max − min"},
+    {s:"cw", q:"เทคนิคใดเหมาะกับข้อมูลที่มีค่าศูนย์ (0) เป็นจุดสำคัญ?", o:["Min-Max Normalization","Standardization","Maximum Absolute Scaling","Log Transformation","Square-root Transformation"], a:2, e:"x / max|x| ทำให้ 0 ยังเป็น 0"},
+    {s:"cw", q:"การ Normalize to Unit Length มีวัตถุประสงค์ใด?", o:["ให้เวกเตอร์มีค่าเฉลี่ย 0","ให้เวกเตอร์มีขนาดเท่ากับ 1","ให้เวกเตอร์มีค่าสูงสุด = 1","ให้เวกเตอร์อยู่ในช่วง 0–1","ให้เวกเตอร์อยู่ในช่วง -1 ถึง 1"], a:1, e:"หารด้วย L1 หรือ L2 norm"},
+    {s:"cw", q:"Log Transformation มักใช้กับข้อมูลแบบใด?", o:["ข้อมูลที่เป็นลบ","ข้อมูลที่มีค่า 0","ข้อมูลที่มีการกระจายแบบเบ้ขวาและมีค่ามาก","ข้อมูล Normal Distribution","ข้อมูลที่มีค่าเท่ากัน"], a:2, e:"log ของ 0 และค่าลบไม่นิยาม"},
+    {s:"cw", q:"Reciprocal Transformation ไม่สามารถใช้ได้กับกรณีใด?", o:["ข้อมูลมีค่าเป็นศูนย์","ข้อมูลมีค่ามาก","ข้อมูลเป็นจำนวนเต็ม","ข้อมูลมีค่าเฉลี่ยสูง","ข้อมูลมีการกระจายปกติ"], a:0, e:"1/0 ไม่นิยาม"},
+    {s:"cw", q:"Yeo-Johnson Transformation แตกต่างจาก Box-Cox Transformation เพราะอะไร?", o:["ใช้กับข้อมูลบวกเท่านั้น","ใช้กับข้อมูลที่มีค่าลบและศูนย์ได้","ใช้กับข้อมูลที่เป็น Normal เท่านั้น","ใช้ค่าเฉลี่ยแทนค่ามากสุด","ใช้ Reciprocal แทนการยกกำลัง"], a:1, e:"Box-Cox ใช้ได้เฉพาะค่าบวก"},
+    {s:"cw", q:"ข้อมูลอายุ [20, 30, 40, 50, 60] จงหาค่า Standardization ของอายุ 50 (μ = 40, σ = 14.14)", o:["-0.70","0","0.70","1.41","2.0"], a:2, e:"(50 − 40) / 14.14 = 0.707"},
+    {s:"cw", q:"ข้อมูล [10, 20, 30, 40] ใช้ Min-Max Normalization แล้วค่าของ 30 คือเท่าไร? (min = 10, max = 40)", o:["33","50","66","75","0"], a:2, e:"(30 − 10) / 30 = 0.667 (ตัวเลือกเขียนเป็น %)"},
+    {s:"cw", q:"ข้อมูล [20, 30, 40, 50, 60] ใช้ Mean Normalization จะได้ค่าของ 20 เท่ากับ? (mean = 40, min = 20, max = 60)", o:["-1","-0.5","-0.25","0","1"], a:1, e:"(20 − 40) / 40 = −0.5"},
+    {s:"cw", q:"ถ้าเวกเตอร์ X = (3, 4) ถูก Normalize ด้วย L2 Norm จะได้ค่าใหม่เป็น?", o:["(0.3, 0.4)","(0.6, 0.8)","(0.5, 0.5)","(3, 4)","(1, 1)"], a:1, e:"‖X‖ = √(9 + 16) = 5 → (3/5, 4/5)"},
+    {s:"cw", q:"Log Transformation เหมาะสมที่สุดกับข้อมูลแบบใด?", o:["ค่า [-2, -1, 0, 1, 2]","ค่า [1, 10, 100, 1000]","ค่า [0, 0.1, 0.2]","ค่า [1, 2, 3]","ค่า [5, 5, 5, 5]"], a:1, e:"ช่วงค่ากว้างและเป็นบวกทั้งหมด → 0, 1, 2, 3"},
+    {s:"cw", q:"Reciprocal Transformation ของค่า 0.5 คืออะไร?", o:["5","1","2","-2","-0.5"], a:2, e:"1 / 0.5 = 2"},
+    {s:"cw", q:"Square-root Transformation จะให้ผลกับข้อมูลแบบใดมากที่สุด?", o:["ข้อมูลที่เป็น Normal","ข้อมูลที่ค่ามีความแปรปรวนตามค่าเฉลี่ย","ข้อมูลที่ค่ามี outlier มาก","ข้อมูลที่เป็นจำนวนเต็ม","ข้อมูลที่เป็นค่าลบ"], a:1, e:"variance proportional to the mean"},
+    {s:"cw", q:"Box-Cox Transformation ใช้ได้เฉพาะข้อมูลใด?", o:["ข้อมูลเป็นบวก","ข้อมูลเป็นลบ","ข้อมูลที่มีค่า 0","ข้อมูลที่ Normal อยู่แล้ว","ข้อมูลที่ไม่ใช่ตัวเลข"], a:0, e:"ถ้าไม่บวก ต้องบวกค่าคงที่ก่อน หรือใช้ Yeo-Johnson"},
+    {s:"cw", q:"หากข้อมูล X = (−3, −1, 0, 2, 4) ถูกแปลงด้วย Yeo-Johnson Transformation ข้อใดเป็นจริง?", o:["ข้อมูลติดลบไม่สามารถแปลงได้","ค่าติดลบถูกปรับให้อยู่ในช่วงเหมาะสม","ข้อมูลศูนย์ไม่สามารถแปลงได้","ข้อมูลค่าบวกจะหายไป","ข้อมูลทุกค่าถูกแปลงเป็น 0"], a:1, e:"ตรงกับข้อสังเกตในสไลด์"},
+    {s:"cw", q:"หากต้องการลดผลกระทบของ Outliers โดยยังคงทิศทางของข้อมูลไว้ ควรใช้วิธีใด?", o:["Min-Max Normalization","Mean Normalization","Maximum Absolute Scaling","Standardization","Log Transformation"], a:2, e:"สไลด์ Max Abs: 'รักษาทิศทางของข้อมูล' และ 'ค่าผิดปกติมีผลกระทบน้อยกว่า Max-Min'"},
+    {s:"ex", q:"ข้อมูล [−8, −2, 0, 4, 5] ใช้ Maximum Absolute Scaling ค่า 4 จะกลายเป็นเท่าไร?", o:["0.8","0.5","−0.5","1","0.4"], a:1, e:"max|x| = 8 → 4 / 8 = 0.5 (ส่วน −8 → −1)"},
+    {s:"ex", q:"เวกเตอร์ X = (3, 4) Normalize ด้วย L1 Norm จะได้อะไร?", o:["(0.6, 0.8)","(3/7, 4/7)","(0.75, 1)","(0.3, 0.4)","(1, 1)"], a:1, e:"L1 = |3| + |4| = 7"},
+    {s:"ex", q:"ข้อมูล [15, 20, 35, 40, 65] ใช้ Min-Max ค่า 35 จะกลายเป็นเท่าไร?", o:["0.35","0.4","0.5","0.54","0.7"], a:1, e:"(35 − 15) / (65 − 15) = 20 / 50 = 0.4"},
+    {s:"ex", q:"Min-Max โดย min = 10, max = 50 ค่าที่ normalize แล้วได้ 0.25 ค่าเดิมคือเท่าไร?", o:["12.5","20","25","30","35"], a:1, e:"x = 10 + 0.25 × 40 = 20"},
+    {s:"ex", q:"ข้อมูลมี outlier ค่าสูงมาก 1 ค่า ถ้าใช้ Min-Max Normalization จะเกิดอะไรขึ้น?", o:["ข้อมูลส่วนใหญ่ถูกบีบอัดอยู่ในช่วงแคบใกล้ 0","outlier ถูกลบออก","ค่าเฉลี่ยกลายเป็น 0","ข้อมูลกลายเป็นแจกแจงปกติ","ไม่มีผลใดๆ"], a:0, e:"max ถูก outlier ดึง ตัวส่วนใหญ่ขึ้น"},
+    {s:"ex", q:"Box-Cox ใช้ λ = 0.5 ค่า x = 9 จะแปลงเป็นเท่าไร?", o:["3","4","4.5","6","2"], a:1, e:"(9^0.5 − 1) / 0.5 = (3 − 1) / 0.5 = 4"},
+    {s:"ex", q:"Box-Cox เมื่อ λ = 0 ใช้สูตรใด?", o:["x' = x","x' = 1/x","x' = ln x","x' = √x","x' = x²"], a:2, e:"กรณีพิเศษ λ = 0 → ln(x)"},
+    {s:"ex", q:"Box-Cox และ Yeo-Johnson ประมาณค่าพารามิเตอร์ λ ด้วยวิธีใด?", o:["Least squares","Maximum Likelihood Estimation (MLE)","Chi-square","K-means","Gradient boosting"], a:1, e:"λ อยู่ระหว่าง −5 ถึง 5"},
+    {s:"ex", q:"Reciprocal transformation ของข้อมูลบวก (1, 2, 5, 10, 20) มีผลต่อลำดับค่าอย่างไร?", o:["ลำดับเดิม","ลำดับกลับกัน ค่ามากกลายเป็นค่าน้อย","ทุกค่าเท่ากัน","ค่ากลายเป็นลบ","ไม่สามารถคำนวณได้"], a:1, e:"ได้ (1, 0.5, 0.2, 0.1, 0.05) จึงต้องระวังการตีความ"},
+    {s:"ex", q:"Square-root transformation ของ (1, 4, 9, 16, 25) คืออะไร?", o:["(1, 2, 3, 4, 5)","(0, 2, 3, 4, 5)","(1, 16, 81, 256, 625)","(0.5, 2, 4.5, 8, 12.5)","(1, 0.25, 0.11, 0.06, 0.04)"], a:0, e:"√ ของแต่ละค่า"},
+    {s:"ex", q:"Normalize to Unit Length เหมาะกับอัลกอริทึมใด?", o:["Decision Tree","KNN และ SVM","Naïve Bayes","Linear regression เท่านั้น","Apriori"], a:1, e:"อัลกอริทึมที่อิงระยะทาง/ทิศทางเวกเตอร์"},
+    {s:"ex", q:"เทคนิคใดทำให้ค่าลบยังคงเป็นลบ ค่าบวกยังคงเป็นบวก และ 0 ยังเป็น 0?", o:["Min-Max Normalization","Maximum Absolute Scaling","Mean Normalization","Box-Cox","Reciprocal"], a:1, e:"หารด้วยค่าบวก (max|x|) อย่างเดียว เครื่องหมายไม่เปลี่ยน"},
+    {s:"ex", q:"Standardization ของอายุ 20 ในชุด [20, 30, 40, 50, 60] (μ = 40, σ = 14.14) คือเท่าไร?", o:["−0.70","−1.41","−2","0","1.41"], a:1, e:"(20 − 40) / 14.14 = −1.41"}
+  ]
+});
+const CALC = [
+  {
+    t: "Z-score และการหา outlier", tag: "อาจารย์บอกว่าออก",
+    f: "Z = (x − x̄) / σ<br>|Z| &gt; 3 → outlier",
+    ex: {
+      q: "ข้อมูล [2, 4, 4, 4, 5, 5, 7, 9] ค่า 9 เป็น outlier หรือไม่ (ใช้เกณฑ์ |Z| &gt; 3)",
+      s: [
+        "x̄ = (2+4+4+4+5+5+7+9) / 8 = 40 / 8 = <b>5</b>",
+        "ผลต่างกำลังสอง: 9, 1, 1, 1, 0, 0, 4, 16 → รวม 32",
+        "σ = √(32 / 8) = √4 = <b>2</b>",
+        "Z(9) = (9 − 5) / 2 = <b>2</b>",
+        "|Z| = 2 ไม่เกิน 3 → <b>ไม่เป็น outlier</b>"
+      ]
+    },
+    p: [
+      { q: "μ = 50, σ = 8 ค่า x = 78 และ x = 30 เป็น outlier หรือไม่", s: ["Z(78) = (78 − 50) / 8 = 3.5 → |Z| &gt; 3 เป็น outlier", "Z(30) = (30 − 50) / 8 = −2.5 → |Z| ≤ 3 ไม่เป็น"], a: "78 เป็น outlier, 30 ไม่เป็น" },
+      { q: "μ = 120, σ = 15 ค่าใดบ้างถือเป็น outlier", s: ["ขอบบน = 120 + 3(15) = 165", "ขอบล่าง = 120 − 3(15) = 75"], a: "ค่าที่มากกว่า 165 หรือน้อยกว่า 75" }
+    ]
+  },
+  {
+    t: "Standardization", tag: "อาจารย์บอกว่าออก",
+    f: "x' = (x − μ) / σ<br>ผลลัพธ์: mean = 0, SD = 1",
+    ex: {
+      q: "Standardize ข้อมูล [2, 4, 4, 4, 5, 5, 7, 9] (μ = 5, σ = 2)",
+      s: [
+        "2 → (2 − 5)/2 = −1.5",
+        "4 → (4 − 5)/2 = −0.5 (สามตัว)",
+        "5 → 0 (สองตัว)",
+        "7 → (7 − 5)/2 = 1",
+        "9 → (9 − 5)/2 = 2",
+        "ได้ <b>[−1.5, −0.5, −0.5, −0.5, 0, 0, 1, 2]</b>"
+      ]
+    },
+    p: [
+      { q: "อายุ [20, 30, 40, 50, 60] (μ = 40, σ = 14.14) จงหาค่า standardize ทุกตัว", s: ["(20−40)/14.14 = −1.41", "(30−40)/14.14 = −0.71", "40 → 0", "50 → 0.71, 60 → 1.41"], a: "[−1.41, −0.71, 0, 0.71, 1.41]" },
+      { q: "คะแนนสอบ μ = 65, σ = 10 นักศึกษาได้ Z = 1.8 คะแนนดิบเท่าไร", s: ["x = μ + Zσ", "x = 65 + 1.8(10) = 83"], a: "83 คะแนน" }
+    ]
+  },
+  {
+    t: "Min-Max · Mean · Max Abs Normalization", tag: "อาจารย์บอกว่าออก",
+    f: "Min-Max: (x − min) / (max − min)<br>Mean: (x − mean) / (max − min)<br>Max Abs: x / max|x|",
+    ex: {
+      q: "ข้อมูล [15, 20, 35, 40, 65] หาค่าของ 65 ทั้งสามวิธี",
+      s: [
+        "min = 15, max = 65, ช่วง = 50, mean = 175/5 = 35, max|x| = 65",
+        "Min-Max: (65 − 15) / 50 = <b>1</b>",
+        "Mean: (65 − 35) / 50 = <b>0.6</b>",
+        "Max Abs: 65 / 65 = <b>1</b>"
+      ]
+    },
+    p: [
+      { q: "ข้อมูล [−6, −3, 0, 3, 12] หา Max Abs ของทุกตัว", s: ["max|x| = 12", "−6/12 = −0.5, −3/12 = −0.25, 0, 3/12 = 0.25, 12/12 = 1"], a: "[−0.5, −0.25, 0, 0.25, 1]" },
+      { q: "ข้อมูลเดิม [−6, −3, 0, 3, 12] หา Min-Max ของ 3 และ Mean Normalization ของ 12", s: ["ช่วง = 12 − (−6) = 18", "Min-Max(3) = (3 + 6)/18 = 0.5", "mean = 6/5 = 1.2 → (12 − 1.2)/18 = 0.6"], a: "Min-Max = 0.5, Mean = 0.6" }
+    ]
+  },
+  {
+    t: "IQR และ Winsorization", tag: "อาจารย์บอกว่าออก",
+    f: "IQR = Q3 − Q1<br>ขอบบน = Q3 + 1.5·IQR, ขอบล่าง = Q1 − 1.5·IQR<br>ค่าที่เกินขอบ → แทนด้วยค่าขอบ",
+    ex: {
+      q: "ตัวอย่างสไลด์: {10, 20, 30, 40, 50, 60, 70, 80, 90, 1000}",
+      s: [
+        "สไลด์ใช้ Q1 = 25 (กลางระหว่างตัวที่ 2–3) และ Q3 = 85 (กลางระหว่างตัวที่ 8–9)",
+        "IQR = 85 − 25 = 60",
+        "ขอบบน = 85 + 1.5(60) = <b>175</b>, ขอบล่าง = 25 − 90 = <b>−65</b>",
+        "1000 &gt; 175 → แทนด้วย <b>175</b>"
+      ],
+      n: "วิธีหา Q1/Q3 มีหลายแบบ ถ้าโจทย์ให้ Q1, Q3 มาให้ใช้ตามนั้น ถ้าจำนวนข้อมูลเป็นคี่และ (n+1)/4 ลงตัว ทุกวิธีได้ค่าเดียวกัน"
+    },
+    p: [
+      { q: "{4, 6, 7, 9, 10, 12, 13, 15, 16, 18, 60} (n = 11) ทำ Winsorization ด้วยกฎ IQR (d = 1.5)", s: ["ตำแหน่ง Q1 = (11+1)/4 = 3 → Q1 = 7", "ตำแหน่ง Q3 = 3(12)/4 = 9 → Q3 = 16", "IQR = 9", "ขอบบน = 16 + 13.5 = 29.5, ขอบล่าง = 7 − 13.5 = −6.5", "60 &gt; 29.5 → แทนด้วย 29.5"], a: "60 → 29.5 ค่าอื่นเหมือนเดิม" },
+      { q: "Gaussian winsorization: mean = 50, SD = 10 ข้อมูลมีค่า 12 และ 95", s: ["ขอบบน = 50 + 3(10) = 80", "ขอบล่าง = 50 − 3(10) = 20", "95 → 80, 12 → 20"], a: "95 → 80, 12 → 20" }
+    ]
+  },
+  {
+    t: "Normalize to Unit Length (L1, L2)",
+    f: "L1 = |x₁| + |x₂| + …<br>L2 = √(x₁² + x₂² + …)<br>x' = x / norm",
+    ex: {
+      q: "X = (6, 8)",
+      s: ["L2 = √(36 + 64) = 10 → <b>(0.6, 0.8)</b>", "L1 = 6 + 8 = 14 → <b>(0.43, 0.57)</b>"]
+    },
+    p: [
+      { q: "X = (1, 2, 2) ทั้ง L1 และ L2", s: ["L2 = √(1 + 4 + 4) = 3 → (1/3, 2/3, 2/3)", "L1 = 5 → (0.2, 0.4, 0.4)"], a: "L2: (0.33, 0.67, 0.67) · L1: (0.2, 0.4, 0.4)" }
+    ]
+  },
+  {
+    t: "Confusion Matrix metrics",
+    f: "Accuracy = (TP+TN)/N · Precision = TP/(TP+FP)<br>Recall = TP/(TP+FN) · Specificity = TN/(TN+FP)<br>F1 = 2PR/(P+R) · Balanced Acc = (Recall+Spec)/2",
+    ex: {
+      q: "TP = 40, FN = 10, FP = 20, TN = 930",
+      s: ["Accuracy = 970/1000 = <b>0.97</b>", "Precision = 40/60 = <b>0.667</b>", "Recall = 40/50 = <b>0.80</b>", "F1 = 2(0.667)(0.8)/(1.467) = <b>0.727</b>", "Specificity = 930/950 = 0.979 → Balanced = <b>0.889</b>"]
+    },
+    p: [
+      { q: "TP = 30, FP = 10, FN = 20, TN = 40", s: ["Accuracy = 70/100 = 0.70", "Precision = 30/40 = 0.75", "Recall = 30/50 = 0.60", "F1 = 2(0.75)(0.6)/1.35 = 0.667", "Specificity = 40/50 = 0.80 → Balanced = 0.70"], a: "Acc 0.70, P 0.75, R 0.60, F1 0.667, BA 0.70" }
+    ]
+  },
+  {
+    t: "SMOTE และ NearMiss-1",
+    f: "SMOTE: x_new = x + λ(x_nb − x), λ ∈ [0, 1]<br>NearMiss-1: เก็บ majority ที่ระยะ (Euclidean) ถึง minority น้อยที่สุด",
+    ex: {
+      q: "A = (2, 4) เพื่อนบ้าน B = (6, 2) สุ่ม λ = 0.25",
+      s: ["x = 2 + 0.25(6 − 2) = 3", "y = 4 + 0.25(2 − 4) = 3.5", "จุดใหม่ = <b>(3, 3.5)</b>"]
+    },
+    p: [
+      { q: "minority A = (0, 0) majority B1(3,4), B2(6,8), B3(1,1), B4(5,12) ใช้ NearMiss-1 เก็บ 2 จุด", s: ["d(B1) = 5, d(B2) = 10, d(B3) = √2 ≈ 1.41, d(B4) = 13", "เรียงจากใกล้: B3, B1, B2, B4"], a: "เก็บ B3 และ B1" }
+    ]
+  },
+  {
+    t: "Discretization (Equal Width / Frequency)",
+    f: "Equal Width: w = (max − min) / k<br>Equal Frequency: f = m / k",
+    ex: {
+      q: "[5, 8, 12, 15, 22, 27, 30, 35, 40, 45] แบ่ง 4 bin แบบ Equal Width",
+      s: ["w = (45 − 5) / 4 = 10", "ขอบ: [5, 15], [15, 25], [25, 35], [35, 45]"]
+    },
+    p: [
+      { q: "ข้อมูลเดิมแบ่ง Equal Frequency 5 bin", s: ["f = 10/5 = 2 ตัวต่อ bin", "[5, 8], [12, 15], [22, 27], [30, 35], [40, 45]"], a: "bin ละ 2 ตัว" }
+    ]
+  },
+  {
+    t: "Reservoir Sampling",
+    f: "ตัวที่ n: สุ่ม I ∈ [1, n] ถ้า I ≤ k แทนตำแหน่ง I<br>ตอนจบ P(อยู่ใน reservoir) = k/N",
+    ex: {
+      q: "k = 3 สตรีม A, B, C, D, E, F, G สุ่มได้ I = 2, 5, 1, 3 สำหรับ n = 4, 5, 6, 7",
+      s: ["เริ่ม [A, B, C]", "n=4 (D), I=2 → [A, D, C]", "n=5 (E), I=5 &gt; 3 → ไม่เปลี่ยน", "n=6 (F), I=1 → [F, D, C]", "n=7 (G), I=3 → <b>[F, D, G]</b>", "แต่ละตัวมีโอกาสอยู่ตอนจบ = 3/7"]
+    },
+    p: []
+  },
+  {
+    t: "Transformations",
+    f: "Log: log x · Reciprocal: 1/x · Sqrt: √x<br>Box-Cox: (x^λ − 1)/λ, λ = 0 → ln x",
+    ex: {
+      q: "แปลงค่าต่อไปนี้",
+      s: ["log₁₀ 1000 = 3", "1 / 0.25 = 4", "√49 = 7", "Box-Cox λ = 0.5, x = 16: (4 − 1)/0.5 = <b>6</b>"],
+      n: "สไลด์ตัวอย่าง Box-Cox ของ (1, 2, 3, 4, 5) ค่าที่ถูกคือ (0, 0.83, 1.46, 2, 2.47) ตัวเลขในสไลด์คลาดเคลื่อน"
+    },
+    p: []
+  }
+];
+
+</script>
+<script>
+const KEY="dsfinal-v1";
+let store={};
+try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){store={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+const L="ABCDE";
+function seeded(seed){let h=7;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;return()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296}}
+function ordFor(key,q){const n=q.o.map((_,i)=>i);if(q.s!=="ex"||q.ns)return n;const r=seeded(key);for(let i=n.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[n[i],n[j]]=[n[j],n[i]]}return n}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const wrapTables=h=>h.replace(/<table>/g,'<div class="tw"><table>').replace(/<\/table>/g,'</table></div>');
+
+const PAGES=[{id:"mock",lec:"สอบข้อกา",title:"สุ่มปรนัยทุกบท"},{id:"write",lec:"สอบข้อเขียน",title:"โจทย์วิธีทำ"},...TOPICS.map(t=>({id:t.id,lec:t.lec,title:t.title})),{id:"home",lec:"ภาพรวม",title:"แนวสอบ + ความคืบหน้า"}];
+let cur=location.hash.slice(1)||"mock";
+if(cur==="calc")cur="write";
+if(!PAGES.find(p=>p.id===cur))cur="mock";
+const filt={};
+
+function renderTabs(){
+  document.getElementById("tabs").innerHTML=PAGES.map(p=>`<button class="tab${p.id==="mock"||p.id==="write"?" x":""}" role="tab" aria-selected="${p.id===cur}" data-id="${p.id}">${esc(p.lec)}<small>${esc(p.title)}</small></button>`).join("");
+  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.id));
+  const a=document.querySelector('.tab[aria-selected="true"]');if(a)a.scrollIntoView({block:"nearest",inline:"center"});
+}
+function go(id){cur=id;history.replaceState(null,"","#"+id);renderTabs();render();window.scrollTo(0,0)}
+
+function globalMeter(){
+  let tot=0,ok=0,bad=0;
+  TOPICS.forEach(t=>{tot+=t.quiz.length;const s=store[t.id]||{};t.quiz.forEach((q,i)=>{if(s[i]!==undefined){s[i]===q.a?ok++:bad++}})});
+  const done=ok+bad,pct=Math.round(done/tot*100);
+  document.getElementById("rfg").style.strokeDashoffset=263.9*(1-done/tot);
+  document.getElementById("rpct").textContent=pct+"%";
+  document.getElementById("gtxt").innerHTML=`<span><b>${done}</b>/ ${tot} ข้อ</span><span><b>${ok}</b>ถูก</span><span><b>${done?Math.round(ok/done*100):0}%</b>ความแม่น</span>`;
+}
+
+function qCard(q,num,picked,onPick,key,order){
+  const ord=order||q.o.map((_,i)=>i);
+  const done=picked!==undefined;
+  const opts=ord.map((oi,pos)=>{
+    let cls="";if(done){if(oi===q.a)cls="right";else if(oi===picked)cls="wrong"}
+    return `<button class="opt ${cls}" data-k="${key}" data-o="${oi}" ${done?"disabled":""}><b>${L[pos]}</b><span>${esc(q.o[oi])}</span></button>`;
+  }).join("");
+  let exp="";
+  if(done){const okk=picked===q.a;exp=`<div class="exp"><strong class="${okk?"ok":"bad"}">${okk?"ถูก":"ผิด — ตอบ "+L[ord.indexOf(q.a)]}</strong> · ${esc(q.e)}</div>`}
+  return `<div class="q"><div class="qh"><span class="qn">${num}</span><span class="qt">${esc(q.q)}</span><span class="badge ${q.s}">${q.s==="cw"?q.cwname:"ฝึกเพิ่ม"}</span></div><div class="opts">${opts}</div>${exp}</div>`;
+}
+
+function renderHome(v){
+  const cards=TOPICS.map(t=>{const s=store[t.id]||{};const n=Object.keys(s).length;const ok=t.quiz.filter((q,i)=>s[i]===q.a).length;const cw=t.quiz.filter(q=>q.s==="cw").length;
+    return `<a class="lc" href="#${t.id}" data-go="${t.id}"><span class="k">${esc(t.lec)}</span><h3>${esc(t.title)}</h3><p>${esc(t.cw)} · ${cw} + ${t.quiz.length-cw} ข้อ · ถูก ${ok}/${n}</p><div class="bar"><i class="g" style="width:${ok/t.quiz.length*100}%"></i><i class="r" style="width:${(n-ok)/t.quiz.length*100}%"></i></div></a>`}).join("");
+  v.innerHTML=`<h2>ภาพรวม</h2><p class="sub">แต่ละบทมีสรุปสั้น ข้อจาก classwork ของอาจารย์ และข้อฝึกเพิ่มแนวเดียวกัน ระบบจำคำตอบไว้ในเครื่องนี้</p>
+  <div class="grid">${cards}</div>
+  <h2 style="margin-top:32px">แนวที่อาจารย์บอก</h2>
+  <div class="kw" style="margin-top:12px">
+  <div><b>ปรนัย 95 ข้อ</b> 4–5 ตัวเลือก ง่ายปนยาก คล้ายแบบฝึกหัดแต่ไม่เหมือน ฝึกให้เข้าใจเหตุผลในคำอธิบาย อย่าจำตำแหน่งคำตอบ</div>
+  <div><b>วิธีทำ 3 ข้อเล็ก</b> มีสูตรให้บางส่วน เรื่อง Standardization, Normalization และหา outlier ฝึกได้ในแท็บ <a href="#write" data-go="write">สอบข้อเขียน</a></div>
+  <div><b>ลำดับแนะนำ</b> อ่านสรุป → ทำข้อ classwork → ทำข้อฝึกเพิ่ม → กรอง "ข้อที่ผิด" ทำซ้ำ → <a href="#mock" data-go="mock">สอบข้อกา</a></div>
+  </div>`;
+}
+function renderTopic(v,t){
+  const s=store[t.id]||(store[t.id]={});
+  const f=filt[t.id]||"all";
+  const idx=t.quiz.map((q,i)=>i).filter(i=>f==="all"||(f==="wrong"?(s[i]!==undefined&&s[i]!==t.quiz[i].a):t.quiz[i].s===f));
+  const ok=t.quiz.filter((q,i)=>s[i]===q.a).length,n=Object.keys(s).length;
+  const ch=(k,lab)=>`<button class="chip" aria-pressed="${f===k}" data-f="${k}">${lab}</button>`;
+  v.innerHTML=`<h2>${esc(t.lec)} · ${esc(t.title)}</h2><p class="sub">${esc(t.cw)} · ${t.quiz.length} ข้อ</p>
+  <details class="sum" open><summary>สรุปหัวข้อ</summary><div class="sumbody">${wrapTables(t.summary)}</div></details>
+  <div class="filters">${ch("all","ทั้งหมด")}${ch("cw","Classwork")}${ch("ex","ฝึกเพิ่ม")}${ch("wrong","ข้อที่ผิด")}<button class="chip reset" id="rst">ล้างคำตอบบทนี้</button></div>
+  <p class="score">ถูก ${ok} จาก ${n} ข้อที่ทำ</p>
+  <div id="qs">${idx.length?idx.map(i=>qCard({...t.quiz[i],cwname:t.cw.replace(" และ ","/")},i+1,s[i],null,t.id+":"+i,ordFor(t.id+":"+i,t.quiz[i]))).join(""):`<p class="empty">${f==="wrong"?"ยังไม่มีข้อที่ผิด":"ไม่มีข้อในหมวดนี้"}</p>`}</div>`;
+  v.querySelectorAll(".chip[data-f]").forEach(b=>b.onclick=()=>{filt[t.id]=b.dataset.f;render()});
+  v.querySelector("#rst").onclick=()=>{if(confirm("ล้างคำตอบทั้งหมดของบทนี้?")){store[t.id]={};save();render()}};
+  v.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const[tid,qi]=b.dataset.k.split(":");store[tid][qi]=+b.dataset.o;save();const card=b.closest(".q");const q=t.quiz[qi];card.outerHTML=qCard({...q,cwname:t.cw.replace(" และ ","/")},+qi+1,+b.dataset.o,null,b.dataset.k,ordFor(b.dataset.k,t.quiz[qi]));bindOpts(v,t);updScore(v,t);globalMeter()});
+}
+function bindOpts(v,t){v.querySelectorAll(".opt:not([disabled])").forEach(b=>{if(!b.onclick)b.onclick=()=>{const[tid,qi]=b.dataset.k.split(":");store[tid][qi]=+b.dataset.o;save();b.closest(".q").outerHTML=qCard({...t.quiz[qi],cwname:t.cw.replace(" และ ","/")},+qi+1,+b.dataset.o,null,b.dataset.k,ordFor(b.dataset.k,t.quiz[qi]));bindOpts(v,t);updScore(v,t);globalMeter()}})}
+function updScore(v,t){const s=store[t.id];const ok=t.quiz.filter((q,i)=>s[i]===q.a).length;v.querySelector(".score").textContent=`ถูก ${ok} จาก ${Object.keys(s).length} ข้อที่ทำ`}
+
+function renderCalcRef(v){
+  v.innerHTML=CALC.map((c,ci)=>`
+  <section class="calc"><h3>${esc(c.t)} ${c.tag?`<span class="badge cw">${esc(c.tag)}</span>`:""}</h3>
+  <div class="formula">${c.f}</div>
+  <p class="ex-q">ตัวอย่าง: ${c.ex.q}</p><ol class="steps">${c.ex.s.map(x=>`<li>${x}</li>`).join("")}</ol>
+  ${c.ex.n?`<p class="note" style="margin-top:8px">${c.ex.n}</p>`:""}
+  ${c.p.map((p,pi)=>`<div class="practice"><p><b>ฝึก ${pi+1}.</b> ${p.q}</p><button class="reveal" data-r="${ci}-${pi}">ดูวิธีทำ</button><div id="r${ci}-${pi}" hidden><ol class="steps">${p.s.map(x=>`<li>${x}</li>`).join("")}</ol><p class="ans">ตอบ: ${p.a}</p></div></div>`).join("")}
+  </section>`).join("");
+  v.querySelectorAll(".reveal").forEach(b=>b.onclick=()=>{const d=document.getElementById("r"+b.dataset.r);d.hidden=!d.hidden;b.textContent=d.hidden?"ดูวิธีทำ":"ซ่อนวิธีทำ"});
+}
+
+/* ===== สอบข้อเขียน: สุ่มโจทย์ ===== */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pk=a=>a[Math.floor(Math.random()*a.length)];
+const r2=x=>Math.round(x*100)/100;
+const fm=x=>{const v=r2(x);return (Object.is(v,-0)?0:v).toString().replace("-","−")};
+const sum=a=>a.reduce((s,x)=>s+x,0);
+function distinctSorted(n,lo,hi){const s=new Set();while(s.size<n)s.add(ri(lo,hi));return [...s].sort((a,b)=>a-b)}
+
+const GEN={
+  z(){
+    const m=pk([50,60,65,70,75,80]),s=pk([4,6,8,10,12]);
+    const kOut=pk([3.5,4,-3.5,4.5,-4]),kIn=pk([1.5,2,-2.5,-1,2.5,-2]);
+    let A={x:m+kOut*s,z:kOut,out:true},B={x:m+kIn*s,z:kIn,out:false};
+    if(Math.random()<.5)[A,B]=[B,A];
+    const ans=A.out?0:1;
+    return {t:"Z-score และ outlier",
+      q:`คะแนนสอบมีค่าเฉลี่ย μ = ${m} และส่วนเบี่ยงเบนมาตรฐาน σ = ${s}<br>ก) หา Z-score ของ x₁ = ${A.x}<br>ข) หา Z-score ของ x₂ = ${B.x}<br>ค) ค่าใดเป็น outlier (เกณฑ์ |Z| &gt; 3)`,
+      f:[{l:"ก) Z(x₁)",a:A.z},{l:"ข) Z(x₂)",a:B.z},{l:"ค) outlier",c:["x₁","x₂","ทั้งคู่","ไม่มี"],a:ans}],
+      s:[`Z(x₁) = (${A.x} − ${m}) / ${s} = ${fm(A.z)}`,`Z(x₂) = (${B.x} − ${m}) / ${s} = ${fm(B.z)}`,`|${fm(A.out?A.z:B.z)}| &gt; 3 → ${A.out?"x₁":"x₂"} เป็น outlier ส่วนอีกค่า |Z| ≤ 3 ไม่เป็น`]};
+  },
+  std(){
+    const n=5,d=distinctSorted(n,10,60),mu=sum(d)/n,sd=Math.sqrt(sum(d.map(x=>(x-mu)**2))/n);
+    const x=pk([d[0],d[1],d[3],d[4]]),z=(x-mu)/sd;
+    const shown=d.slice().sort(()=>Math.random()-.5);
+    return {t:"Standardization",
+      q:`ข้อมูล [${shown.join(", ")}]<br>ก) หาค่าเฉลี่ย μ<br>ข) หา σ (หารด้วย n ตามตัวอย่างสไลด์)<br>ค) Standardize ค่า ${x}`,
+      f:[{l:"ก) μ",a:mu},{l:"ข) σ",a:sd},{l:`ค) z(${x})`,a:z}],
+      s:[`μ = ${sum(d)} / ${n} = ${fm(mu)}`,`ผลต่างกำลังสอง: ${d.map(v=>fm((v-mu)**2)).join(", ")} → รวม ${fm(sum(d.map(v=>(v-mu)**2)))}`,`σ = √(${fm(sum(d.map(v=>(v-mu)**2)))} / ${n}) = ${fm(sd)}`,`z = (${x} − ${fm(mu)}) / ${fm(sd)} = ${fm(z)}`]};
+  },
+  norm(){
+    const d=distinctSorted(5,-20,40);if(d[0]>=0)d[0]=-ri(4,15);
+    d.sort((a,b)=>a-b);
+    const mn=d[0],mx=d[4],rg=mx-mn,mean=sum(d)/5,ma=Math.max(...d.map(Math.abs));
+    const a=d[2],b=d[3],c=d[1];
+    return {t:"Normalization 3 แบบ",
+      q:`ข้อมูล [${d.join(", ")}]<br>ก) Min-Max Normalization ของ ${a}<br>ข) Mean Normalization ของ ${b}<br>ค) Maximum Absolute Scaling ของ ${c}`,
+      f:[{l:`ก) Min-Max(${a})`,a:(a-mn)/rg},{l:`ข) Mean(${b})`,a:(b-mean)/rg},{l:`ค) MaxAbs(${c})`,a:c/ma}],
+      s:[`min = ${mn}, max = ${mx}, max − min = ${rg}`,`ก) (${a} − (${mn})) / ${rg} = ${fm((a-mn)/rg)}`,`mean = ${sum(d)} / 5 = ${fm(mean)}`,`ข) (${b} − ${fm(mean)}) / ${rg} = ${fm((b-mean)/rg)}`,`max|x| = ${ma}`,`ค) ${c} / ${ma} = ${fm(c/ma)}`]};
+  },
+  iqr(){
+    let d,q1,q3,iq,up;
+    do{d=distinctSorted(10,ri(1,10),ri(30,50));q1=d[2];q3=d[8];iq=q3-q1;up=q3+1.5*iq}while(d[9]>up);
+    const out=Math.ceil(up)+ri(15,80);d=[...d.slice(0,10),out].sort((a,b)=>a-b);
+    q1=d[2];q3=d[8];iq=q3-q1;up=q3+1.5*iq;const lo=q1-1.5*iq;
+    return {t:"IQR และ Winsorization",
+      q:`ข้อมูล (เรียงแล้ว, n = 11): [${d.join(", ")}]<br>ก) Q1 &nbsp; ข) Q3 &nbsp; ค) IQR<br>ง) ขีดจำกัดบน (d = 1.5)<br>จ) ทำ Winsorization แล้ว ${out} จะกลายเป็นเท่าไร`,
+      f:[{l:"ก) Q1",a:q1},{l:"ข) Q3",a:q3},{l:"ค) IQR",a:iq},{l:"ง) ขีดบน",a:up},{l:`จ) ค่าใหม่ของ ${out}`,a:up}],
+      s:[`ตำแหน่ง Q1 = (n+1)/4 = 3 → Q1 = ${q1}`,`ตำแหน่ง Q3 = 3(n+1)/4 = 9 → Q3 = ${q3}`,`IQR = ${q3} − ${q1} = ${iq}`,`ขีดบน = ${q3} + 1.5(${iq}) = ${fm(up)} · ขีดล่าง = ${q1} − ${fm(1.5*iq)} = ${fm(lo)}`,`${out} &gt; ${fm(up)} → แทนด้วย ${fm(up)}`]};
+  },
+  gauss(){
+    const m=pk([40,50,60,70,100]),s=pk([5,8,10,12,15]);
+    const hi=m+3*s+ri(5,40),lo=m-3*s-ri(3,15),mid=m+ri(-2,2)*s;
+    return {t:"Winsorization แบบ Gaussian",
+      q:`ข้อมูลมีค่าเฉลี่ย ${m} และ SD = ${s} ใช้ขอบเขต mean ± 3SD<br>ก) ขีดจำกัดบน &nbsp; ข) ขีดจำกัดล่าง<br>ค) ค่าใหม่ของ ${hi} &nbsp; ง) ค่าใหม่ของ ${lo} &nbsp; จ) ค่าใหม่ของ ${mid}`,
+      f:[{l:"ก) ขีดบน",a:m+3*s},{l:"ข) ขีดล่าง",a:m-3*s},{l:`ค) ${hi} →`,a:m+3*s},{l:`ง) ${lo} →`,a:m-3*s},{l:`จ) ${mid} →`,a:mid}],
+      s:[`ขีดบน = ${m} + 3(${s}) = ${m+3*s}`,`ขีดล่าง = ${m} − 3(${s}) = ${m-3*s}`,`${hi} เกินขีดบน → ${m+3*s}`,`${lo} ต่ำกว่าขีดล่าง → ${m-3*s}`,`${mid} อยู่ในช่วง → คงเดิม`]};
+  },
+  lnorm(){
+    const v=pk([[3,4],[6,8],[5,12],[8,15],[1,2,2],[2,3,6],[4,4,7],[9,12]]);
+    const l2=Math.sqrt(sum(v.map(x=>x*x))),l1=sum(v);
+    return {t:"Normalize to Unit Length",
+      q:`เวกเตอร์ X = (${v.join(", ")})<br>ก) L2 norm &nbsp; ข) องค์ประกอบแรกหลัง L2 normalize<br>ค) L1 norm &nbsp; ง) องค์ประกอบสุดท้ายหลัง L1 normalize`,
+      f:[{l:"ก) ‖X‖₂",a:l2},{l:"ข) x₁ / ‖X‖₂",a:v[0]/l2},{l:"ค) ‖X‖₁",a:l1},{l:"ง) xₙ / ‖X‖₁",a:v[v.length-1]/l1}],
+      s:[`L2 = √(${v.map(x=>x+"²").join(" + ")}) = √${sum(v.map(x=>x*x))} = ${fm(l2)}`,`L2 normalize = (${v.map(x=>fm(x/l2)).join(", ")})`,`L1 = ${v.join(" + ")} = ${l1}`,`L1 normalize = (${v.map(x=>fm(x/l1)).join(", ")})`]};
+  },
+  conf(){
+    const tp=ri(20,90),fn=ri(5,40),fp=ri(5,40),tn=ri(100,600),N=tp+fn+fp+tn;
+    const P=tp/(tp+fp),R=tp/(tp+fn),F=2*P*R/(P+R);
+    return {t:"Confusion Matrix",
+      q:`TP = ${tp}, FN = ${fn}, FP = ${fp}, TN = ${tn}<br>หา Accuracy, Precision, Recall และ F1 (ทศนิยม 2 ตำแหน่ง)`,
+      f:[{l:"Accuracy",a:(tp+tn)/N},{l:"Precision",a:P},{l:"Recall",a:R},{l:"F1",a:F}],
+      s:[`N = ${N} → Accuracy = (${tp} + ${tn}) / ${N} = ${fm((tp+tn)/N)}`,`Precision = ${tp} / (${tp} + ${fp}) = ${fm(P)}`,`Recall = ${tp} / (${tp} + ${fn}) = ${fm(R)}`,`F1 = 2(${fm(P)})(${fm(R)}) / (${fm(P)} + ${fm(R)}) = ${fm(F)}`]};
+  },
+  smote(){
+    const A=[ri(0,6),ri(0,6)],B=[ri(2,10),ri(0,10)],l=pk([0.2,0.25,0.4,0.5,0.6,0.75]);
+    const x=A[0]+l*(B[0]-A[0]),y=A[1]+l*(B[1]-A[1]);
+    return {t:"SMOTE",
+      q:`จุด minority A = (${A}) เพื่อนบ้านใกล้สุด B = (${B}) สุ่มได้ λ = ${l}<br>หาพิกัดจุดใหม่ (x, y)`,
+      f:[{l:"x ใหม่",a:x},{l:"y ใหม่",a:y}],
+      s:[`x = ${A[0]} + ${l}(${B[0]} − ${A[0]}) = ${fm(x)}`,`y = ${A[1]} + ${l}(${B[1]} − ${A[1]}) = ${fm(y)}`]};
+  },
+  ew(){
+    const k=pk([3,4,5]),w=pk([5,8,10,12,15,20]),mn=pk([0,5,10,20]),mx=mn+k*w;let val=ri(mn+1,mx-1);while((val-mn)%w===0)val=ri(mn+1,mx-1);
+    let bin=Math.floor((val-mn)/w)+1;if(bin>k)bin=k;
+    const m=k*pk([3,4,5]);
+    return {t:"Equal Width / Frequency",
+      q:`ข้อมูลมีค่าต่ำสุด ${mn} สูงสุด ${mx} จำนวน ${m} ตัวอย่าง แบ่ง ${k} bin<br>ก) ความกว้าง bin แบบ Equal Width<br>ข) ค่า ${val} อยู่ bin ที่เท่าไร (Equal Width)<br>ค) แบบ Equal Frequency แต่ละ bin มีกี่ตัวอย่าง`,
+      f:[{l:"ก) w",a:w},{l:"ข) bin ที่",a:bin},{l:"ค) f",a:m/k}],
+      s:[`w = (${mx} − ${mn}) / ${k} = ${w}`,`ขอบ: ${Array.from({length:k},(_,i)=>`[${mn+i*w}, ${mn+(i+1)*w}]`).join(", ")}`,`${val} อยู่ bin ที่ ${bin}`,`f = ${m} / ${k} = ${m/k}`]};
+  }
+};
+const GEN_TEACHER=["z","std","norm","iqr","gauss"],GEN_ALL=Object.keys(GEN);
+const GEN_NAME={z:"Z-score",std:"Standardization",norm:"Normalization",iqr:"IQR",gauss:"Gaussian",lnorm:"L1/L2",conf:"Confusion",smote:"SMOTE",ew:"Binning"};
+let wset=null,wmode="teacher";
+function newSet(){
+  const pool=wmode==="teacher"?GEN_TEACHER:wmode==="all"?GEN_ALL:[wmode];
+  const keys=pool.length>=3?shuffle(pool).slice(0,3):[pool[0],pool[0],pool[0]];
+  wset=keys.map(k=>({k,p:GEN[k](),u:{},chk:false,show:false}));
+}
+function okNum(u,a){const s=String(u).trim().replace("−","-").replace(",",".");if(s==="")return false;let v=Number(s);if(s.includes("/")){const[x,y]=s.split("/");v=Number(x)/Number(y)}if(!isFinite(v))return false;return Math.abs(v-a)<=Math.max(0.011,Math.abs(a)*0.005)}
+function renderWrite(v){
+  if(!wset)newSet();
+  const mc=(k,lab)=>`<button class="chip" aria-pressed="${wmode===k}" data-m="${k}">${lab}</button>`;
+  let h=`<h2>สอบข้อเขียน</h2><p class="sub">สุ่มโจทย์ 3 ข้อแบบในห้องสอบ ตัวเลขเปลี่ยนทุกครั้ง พิมพ์คำตอบ (ทศนิยม 2 ตำแหน่ง หรือเศษส่วนอย่าง 2/3) แล้วกดตรวจ</p>
+  <div class="filters">${mc("teacher","เรื่องที่อาจารย์บอก")}${mc("all","ทุกเรื่อง")}${GEN_ALL.map(k=>mc(k,GEN_NAME[k])).join("")}</div>
+  <div class="mockbar"><button class="btn" id="newset">สุ่มชุดใหม่</button></div>`;
+  h+=wset.map((it,i)=>{
+    const p=it.p;
+    const fields=p.f.map((f,j)=>{
+      const u=it.u[j]??"";let mark="";
+      if(it.chk){const ok=f.c?(+u===f.a&&u!==""):okNum(u,f.a);mark=`<span class="fm ${ok?"ok":"bad"}">${ok?"✓":"✗ "+(f.c?f.c[f.a]:fm(f.a))}</span>`}
+      const inp=f.c?`<select data-i="${i}" data-j="${j}"><option value="">เลือก</option>${f.c.map((c,ci)=>`<option value="${ci}" ${String(u)===String(ci)?"selected":""}>${c}</option>`).join("")}</select>`
+        :`<input inputmode="decimal" autocomplete="off" data-i="${i}" data-j="${j}" value="${esc(u)}">`;
+      return `<label class="fld"><span>${f.l}</span>${inp}${mark}</label>`}).join("");
+    const nOk=it.chk?p.f.filter((f,j)=>f.c?(+it.u[j]===f.a&&it.u[j]!==""&&it.u[j]!==undefined):okNum(it.u[j]??"",f.a)).length:0;
+    return `<section class="calc"><h3>ข้อ ${i+1} · ${p.t}${it.chk?` <span class="badge ${nOk===p.f.length?"cw":"ex"}">ถูก ${nOk}/${p.f.length}</span>`:""}</h3>
+    <p class="ex-q">${p.q}</p><div class="flds">${fields}</div>
+    <div class="mockbar" style="margin:10px 0 0"><button class="reveal" data-chk="${i}">ตรวจคำตอบ</button><button class="reveal" data-sh="${i}">${it.show?"ซ่อนวิธีทำ":"ดูวิธีทำ"}</button><button class="reveal" data-re="${i}">โจทย์ใหม่ข้อนี้</button></div>
+    ${it.show?`<ol class="steps">${p.s.map(x=>`<li>${x}</li>`).join("")}</ol>`:""}</section>`}).join("");
+  h+=`<details class="sum" style="margin-top:28px"><summary>สูตรและตัวอย่างทุกเรื่อง</summary><div class="sumbody" id="calcref"></div></details>`;
+  v.innerHTML=h;
+  renderCalcRef(v.querySelector("#calcref"));
+  v.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{wmode=b.dataset.m;newSet();render()});
+  v.querySelector("#newset").onclick=()=>{newSet();render()};
+  v.querySelectorAll("input[data-i],select[data-i]").forEach(el=>{el.oninput=el.onchange=()=>{wset[+el.dataset.i].u[+el.dataset.j]=el.value}});
+  const keep=fn=>{const y=window.scrollY;fn();render();window.scrollTo(0,y)};
+  v.querySelectorAll("[data-chk]").forEach(b=>b.onclick=()=>keep(()=>{wset[+b.dataset.chk].chk=true}));
+  v.querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>keep(()=>{const it=wset[+b.dataset.sh];it.show=!it.show}));
+  v.querySelectorAll("[data-re]").forEach(b=>b.onclick=()=>keep(()=>{const i=+b.dataset.re;const k=wset[i].k;wset[i]={k,p:GEN[k](),u:{},chk:false,show:false}}));
+}
+
+let mock=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startMock(n){
+  const pool=[];TOPICS.forEach(t=>t.quiz.forEach((q,i)=>pool.push({...q,cwname:t.lec,ref:t.lec})));
+  const pick=shuffle(pool).slice(0,n);
+  mock={n,qs:pick.map(q=>({q,order:q.ns?q.o.map((_,i)=>i):shuffle(q.o.map((_,i)=>i)),p:undefined})),done:false};
+  render();
+}
+function renderMock(v){
+  let h=`<h2>สอบข้อกา</h2><p class="sub">สุ่มข้อจากทุกบท และสลับตำแหน่งตัวเลือก ตอบแล้วเฉลยทันที</p><div class="mockbar">${[[20,"สุ่ม 20 ข้อ"],[50,"สุ่ม 50 ข้อ"],[999,"ทุกข้อ"]].map(([n,l])=>`<button class="btn${mock&&mock.n===n?"":" ghost"}" data-n="${n}" aria-pressed="${!!(mock&&mock.n===n)}">${l}</button>`).join("")}</div>`;
+  if(mock){
+    const ans=mock.qs.filter(x=>x.p!==undefined),ok=ans.filter(x=>x.p===x.q.a).length;
+    h+=`<div class="result"><div class="big">${ok}<span style="font-size:1.1rem">/${mock.qs.length}</span></div><div class="rb"><div>ตอบแล้ว ${ans.length} ข้อ${ans.length===mock.qs.length?` · ได้ ${Math.round(ok/mock.qs.length*100)}%`:""}</div><div class="bar"><i class="g" style="width:${ok/mock.qs.length*100}%"></i><i class="r" style="width:${(ans.length-ok)/mock.qs.length*100}%"></i></div></div></div>`;
+    h+=mock.qs.map((x,i)=>qCard({...x.q,cwname:x.q.ref,s:"ex"},i+1,x.p,null,"m:"+i,x.order).replace('class="badge ex">ฝึกเพิ่ม','class="badge ex">'+esc(x.q.ref))).join("");
+  }
+  v.innerHTML=h;
+  v.querySelectorAll(".btn[data-n]").forEach(b=>b.onclick=()=>startMock(+b.dataset.n));
+  v.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const i=+b.dataset.k.split(":")[1];mock.qs[i].p=+b.dataset.o;const y=window.scrollY;render();window.scrollTo(0,y)});
+}
+
+function render(){
+  const v=document.getElementById("view");
+  if(cur==="home")renderHome(v);
+  else if(cur==="write")renderWrite(v);
+  else if(cur==="mock")renderMock(v);
+  else renderTopic(v,TOPICS.find(t=>t.id===cur));
+  v.querySelectorAll("[data-go]").forEach(a=>a.onclick=e=>{e.preventDefault();go(a.dataset.go)});
+  globalMeter();
+}
+renderTabs();render();
+</script>
+</body>
+</html>
