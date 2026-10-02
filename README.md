@@ -1,2 +1,2 @@
 # Data-science
-แบบฝคกวิชา Data science
+แบบฝึกวิชา Data science
