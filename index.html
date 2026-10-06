@@ -148,6 +148,10 @@ td+td,th+th{border-left:1px solid var(--line)}
 
 /* mock / buttons */
 .mockbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+.mockbar.custom{align-items:center;margin-top:-8px}
+.mockbar.custom label{font-size:.9rem;color:var(--muted);font-weight:600}
+.mockbar.custom input{font:inherit;font-size:1rem;width:110px;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--sunk);color:var(--ink)}
+.mockbar.custom input:focus{outline:none;border-color:var(--p);background:var(--card);box-shadow:0 0 0 4px var(--p-soft)}
 .btn{border:none;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:700;font-size:.95rem;padding:11px 18px;border-radius:14px;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--p) 35%,transparent);transition:transform .15s}
 .btn:hover{transform:translateY(-1px)}
 .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
@@ -905,6 +909,7 @@ function renderWrite(v){
 }
 
 let mock=null;
+const TOTAL_Q=TOPICS.reduce((s,t)=>s+t.quiz.length,0);
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function startMock(n){
   const pool=[];TOPICS.forEach(t=>t.quiz.forEach((q,i)=>pool.push({...q,cwname:t.lec,ref:t.lec})));
@@ -913,7 +918,8 @@ function startMock(n){
   render();
 }
 function renderMock(v){
-  let h=`<h2>สอบข้อกา</h2><p class="sub">สุ่มข้อจากทุกบท และสลับตำแหน่งตัวเลือก ตอบแล้วเฉลยทันที</p><div class="mockbar">${[[20,"สุ่ม 20 ข้อ"],[50,"สุ่ม 50 ข้อ"],[999,"ทุกข้อ"]].map(([n,l])=>`<button class="btn${mock&&mock.n===n?"":" ghost"}" data-n="${n}" aria-pressed="${!!(mock&&mock.n===n)}">${l}</button>`).join("")}</div>`;
+  let h=`<h2>สอบข้อกา</h2><p class="sub">สุ่มข้อจากทุกบท และสลับตำแหน่งตัวเลือก ตอบแล้วเฉลยทันที</p><div class="mockbar">${[[20,"20 ข้อ"],[50,"50 ข้อ"],[95,"95 ข้อ (เท่าสอบจริง)"],[TOTAL_Q,`ทุกข้อ (${TOTAL_Q})`]].map(([n,l])=>`<button class="btn${mock&&mock.n===n?"":" ghost"}" data-n="${n}" aria-pressed="${!!(mock&&mock.n===n)}">${l}</button>`).join("")}</div>
+  <form class="mockbar custom" id="mockc" novalidate><label for="mockn">กำหนดเอง</label><input id="mockn" type="number" inputmode="numeric" min="1" max="${TOTAL_Q}" placeholder="1–${TOTAL_Q}" value="${mock&&![20,50,95,TOTAL_Q].includes(mock.n)?mock.n:""}"><button class="btn" type="submit">สุ่ม</button></form>`;
   if(mock){
     const ans=mock.qs.filter(x=>x.p!==undefined),ok=ans.filter(x=>x.p===x.q.a).length;
     h+=`<div class="result"><div class="big">${ok}<span style="font-size:1.1rem">/${mock.qs.length}</span></div><div class="rb"><div>ตอบแล้ว ${ans.length} ข้อ${ans.length===mock.qs.length?` · ได้ ${Math.round(ok/mock.qs.length*100)}%`:""}</div><div class="bar"><i class="g" style="width:${ok/mock.qs.length*100}%"></i><i class="r" style="width:${(ans.length-ok)/mock.qs.length*100}%"></i></div></div></div>`;
@@ -921,6 +927,7 @@ function renderMock(v){
   }
   v.innerHTML=h;
   v.querySelectorAll(".btn[data-n]").forEach(b=>b.onclick=()=>startMock(+b.dataset.n));
+  v.querySelector("#mockc").onsubmit=e=>{e.preventDefault();const n=Math.round(+v.querySelector("#mockn").value);if(n>=1)startMock(Math.min(n,TOTAL_Q))};
   v.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const i=+b.dataset.k.split(":")[1];mock.qs[i].p=+b.dataset.o;const y=window.scrollY;render();window.scrollTo(0,y)});
 }
 
