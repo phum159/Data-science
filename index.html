@@ -82,7 +82,7 @@ details.sum[open]>summary{border-bottom:1px solid var(--line)}
 .sumbody h4{margin:20px 0 6px;font-size:1rem;font-family:"Anuphan",sans-serif;color:var(--p)}
 .sumbody p{margin:6px 0}
 .sumbody ol{margin:6px 0;padding-left:22px}
-mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit;padding:0 .08em;border-radius:2px}
+mark{background:none;color:var(--p);font-weight:700}
 .tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:420px}
 th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
@@ -97,6 +97,7 @@ td+td,th+th{border-left:1px solid var(--line)}
 .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:.84rem;padding:5px 12px;border-radius:999px;cursor:pointer;transition:background .15s}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .chip.reset{margin-left:auto;color:var(--muted);background:transparent;border-style:dashed}
+.chip.reset.armed{color:#fff;background:var(--bad);border-color:var(--bad);border-style:solid}
 .score{font-size:.88rem;color:var(--muted);margin:0 0 14px}
 
 /* question */
@@ -148,10 +149,6 @@ td+td,th+th{border-left:1px solid var(--line)}
 
 /* mock / buttons */
 .mockbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
-.mockbar.custom{align-items:center;margin-top:-8px}
-.mockbar.custom label{font-size:.9rem;color:var(--muted);font-weight:600}
-.mockbar.custom input{font:inherit;font-size:1rem;width:110px;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--sunk);color:var(--ink)}
-.mockbar.custom input:focus{outline:none;border-color:var(--p);background:var(--card);box-shadow:0 0 0 4px var(--p-soft)}
 .btn{border:none;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:700;font-size:.95rem;padding:11px 18px;border-radius:14px;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--p) 35%,transparent);transition:transform .15s}
 .btn:hover{transform:translateY(-1px)}
 .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
@@ -178,6 +175,33 @@ td+td,th+th{border-left:1px solid var(--line)}
   @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.fc-meta{display:flex;align-items:center;gap:12px;font-size:.85rem;color:var(--muted);margin:2px 0 16px}
+.fc-meta .bar{flex:1;height:8px;border-radius:4px;background:var(--sunk);overflow:hidden;display:flex}
+.fc-meta .bar i{display:block;height:100%}
+.fc-stage{perspective:1400px}
+.fc{display:grid;width:100%;min-height:300px;border:none;padding:0;background:none;cursor:pointer;font:inherit;color:inherit;text-align:left;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.8,.2,1);-webkit-tap-highlight-color:transparent}
+.fc.flip{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;padding:22px 22px 18px;display:flex;flex-direction:column;box-shadow:var(--sh)}
+.front{background:radial-gradient(120% 140% at 100% 0%,#A78BFA 0%,rgba(167,139,250,0) 55%),linear-gradient(135deg,#4338CA 0%,#6D28D9 100%);color:#fff;box-shadow:var(--sh-lg)}
+.back{background:var(--card);border:1.5px solid var(--p);transform:rotateY(180deg)}
+.fc-tag{font-size:.75rem;font-weight:600;opacity:.85}
+.back .fc-tag{color:var(--p);opacity:1;font-family:"Anuphan",sans-serif;font-size:.9rem}
+.fc-txt{flex:1;display:flex;align-items:center;font-family:"Anuphan",sans-serif;font-size:clamp(1.4rem,6vw,1.9rem);font-weight:700;line-height:1.3;padding:16px 0}
+.fc-ans{flex:1;font-size:1.02rem;line-height:1.85;padding-top:12px}
+.fc-ans b{color:var(--p)}
+.fc-hint{font-size:.75rem;opacity:.7;text-align:center}
+.fc-count{text-align:center;color:var(--muted);font-size:.85rem;margin:12px 0 10px;font-variant-numeric:tabular-nums}
+.fc-act{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fcb{font-family:"Anuphan",sans-serif;font-weight:700;font-size:1rem;padding:13px;border-radius:16px;cursor:pointer;border:1.5px solid}
+.fcb.no{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.fcb.yes{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.fcb:active{transform:scale(.98)}
+.fc-nav{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
+.fc-nav .reveal[disabled]{opacity:.4;cursor:default}
+.fc-done{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:32px 20px;text-align:center;box-shadow:var(--sh)}
+.fc-done .big{font-family:"Anuphan",sans-serif;font-size:1.5rem;font-weight:700}
+.fc-done p{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.fc{transition:none}}
 </style>
 </head>
 <body>
@@ -689,6 +713,101 @@ const CALC = [
     p: []
   }
 ];
+const FC = [
+// ---------- Lec 8 ----------
+["l8","Data Engineering ทำอะไร","ออกแบบและจัดการ<b>โครงสร้างพื้นฐาน</b>สำหรับเก็บและประมวลผลข้อมูล ให้พร้อมใช้กับ ML"],
+["l8","แหล่งข้อมูล 3 แบบ","1) ข้อมูลจากผู้ใช้ — ผิดพลาดบ่อย ต้องทำความสะอาดมาก<br>2) ข้อมูลที่ระบบสร้าง (log) — สม่ำเสมอแต่ปริมาณมาก<br>3) ข้อมูลบุคคลที่สาม"],
+["l8","JSON — ข้อจำกัด","เป็น text → <b>ใช้พื้นที่มาก</b> (ใหญ่กว่า CSV/Parquet)<br>เปลี่ยนโครงสร้างภายหลังยาก"],
+["l8","CSV vs Parquet","CSV = text, <b>row-major</b><br>Parquet = binary, <b>column-major</b> → อ่านเฉพาะบางคอลัมน์เร็ว ประหยัดพื้นที่ (14 MB → 6 MB)"],
+["l8","Row-major vs Column-major","Row-major: อ่านทีละ<b>แถว</b>เร็ว (เขียนข้อมูลใหม่บ่อย)<br>Column-major: อ่านทีละ<b>คอลัมน์</b>เร็ว (งานวิเคราะห์)"],
+["l8","Relational DB — ข้อจำกัด","<b>JOIN หลายตาราง</b>ทำให้ช้า · schema ตายตัว<br>ตัวอย่าง: MySQL, PostgreSQL"],
+["l8","Document Model (NoSQL)","เก็บข้อมูลไม่มี/กึ่งโครงสร้าง (JSON, XML, BSON) · ยืดหยุ่น<br>MongoDB · collection ≈ table, document ≈ row"],
+["l8","Graph Model","node + edge เน้น<b>ความสัมพันธ์</b><br>ตัวอย่าง: <b>Neo4j</b>"],
+["l8","SQL เป็นภาษาแบบใด","<b>Declarative</b> — บอกแค่ผลลัพธ์ที่ต้องการ ระบบใช้ Query Optimizer หาวิธีดึงเอง"],
+["l8","Warehouse / Lake / Lakehouse","Warehouse: มีโครงสร้าง <b>ประมวลผลแล้ว</b><br>Lake: <b>ข้อมูลดิบ</b>ทุกประเภท<br>Lakehouse: <b>ผสมข้อดี</b>ทั้งสอง"],
+["l8","ETL vs ELT","ETL = Extract → Transform → Load<br>ELT = โหลดข้อมูลดิบก่อน แล้วค่อยแปลง"],
+["l8","OLTP vs OLAP","OLTP: ธุรกรรมผู้ใช้ ต้องเร็ว (<b>จองตั๋ว</b>, เรียกรถ)<br>OLAP: query <b>เชิงวิเคราะห์</b> aggregate หลายแถว"],
+["l8","ACID","<b>A</b>tomicity สำเร็จทั้งหมดหรือยกเลิกทั้งหมด<br><b>C</b>onsistency ตามกฎ<br><b>I</b>solation ธุรกรรมพร้อมกันแยกกัน<br><b>D</b>urability ยืนยันแล้วอยู่ถาวรแม้ระบบล่ม"],
+["l8","BASE","ระบบที่ไม่เป็น ACID<br>Basically Available, Soft state, Eventual consistency"],
+["l8","Dataflow 3 โหมด","1) ผ่านฐานข้อมูล (ช้า)<br>2) ผ่าน Request: REST (สาธารณะ) / RPC (ภายในองค์กร)<br>3) Real-time transport ผ่าน broker"],
+["l8","Pub/Sub vs Message Queue","Pub/Sub: <b>Kafka</b>, Kinesis<br>Message Queue: <b>RabbitMQ</b>, RocketMQ<br>ข้อดี: <b>ลดความซับซ้อน</b>การส่งข้อมูลระหว่างบริการ"],
+["l8","Batch vs Stream","Batch: ข้อมูลอดีต · MapReduce, Spark · <b>ประหยัดทรัพยากร</b> · ฟีเจอร์เปลี่ยนช้า<br>Stream: <b>real-time</b> · Apache Flink, KSQL · ฟีเจอร์เปลี่ยนเร็ว"],
+// ---------- Lec 9 ----------
+["l9","ทำไมต้องเตรียม Training Data","คุณภาพข้อมูลกำหนดผลโมเดล · ลด epoch/ค่าคำนวณ · <b>ป้องกัน Overfitting และ Underfitting</b>"],
+["l9","Non-probability sampling 4 แบบ","Convenience · Snowball · Expert · <b>Quota</b><br>(Systematic, Cluster เป็นแบบ probability)"],
+["l9","Snowball sampling","เริ่มจากกลุ่มเล็ก แล้ว<b>ขยายต่อเป็นทอด</b> เช่น follow ของ follow บน Twitter"],
+["l9","Quota sampling","กำหนด<b>จำนวน</b>ตัวอย่างแต่ละกลุ่มตามสัดส่วนที่ต้องการ (ไม่สุ่ม)"],
+["l9","Simple Random","ทุกตัวอย่างมี<b>โอกาสถูกเลือกเท่ากัน</b>"],
+["l9","Stratified — ข้อดี / ข้อเสีย","แบ่งชั้นแล้วสุ่มแต่ละชั้น → ครอบคลุมทุกกลุ่ม<br>ข้อเสีย: <b>ใช้เวลานาน ซับซ้อน</b> ต้องรู้ลักษณะประชากร"],
+["l9","Weighted sampling","ให้น้ำหนักแต่ละตัวอย่าง<br>แดง 25% น้ำเงิน 75% แต่จริงเท่ากัน → ให้<b>แดงหนักกว่า 3 เท่า</b>"],
+["l9","Reservoir Sampling ใช้เมื่อไร","ข้อมูล<b>ไหลเข้าต่อเนื่อง ใหญ่เกินหน่วยความจำ</b> ไม่รู้จำนวนล่วงหน้า"],
+["l9","Reservoir — ขั้นตอน","1) เติม k ตัวแรก<br>2) ตัวที่ n สุ่ม I ∈ [1, n] ถ้า <b>I ≤ k</b> แทนตำแหน่ง I<br>ทุกตัวมีโอกาสอยู่ = <b>k / N</b> · ผล<b>ไม่แน่นอน</b>"],
+["l9","Hand labeling — ข้อเสีย","แพง · ช้า · ปัญหาความเป็นส่วนตัว · ไม่ยืดหยุ่น"],
+["l9","Label multiplicity","ผู้ติดฉลากหลายคนให้ label <b>ขัดแย้งกัน</b><br>แก้ด้วย <b>Data lineage</b> (ติดตามที่มาข้อมูล)"],
+["l9","Natural label","label ที่ได้จากระบบ/พฤติกรรมเอง<br>เช่น เวลาเดินทางจริงของ Google Maps, การคลิก"],
+["l9","Weak Supervision","สร้าง label ด้วย heuristic ผ่าน <b>Labeling Function</b> (Snorkel)<br>Keyword heuristic · Regex · Database lookup · Model output"],
+["l9","Semi-Supervision 3 แบบ","<b>Self-training</b> (เลือกตัวที่มั่นใจสูงมาเพิ่ม)<br>ความคล้ายคลึง (clustering/KNN)<br>Perturbation (เติม noise)"],
+["l9","Transfer Learning","ใช้โมเดลต้นน้ำกับงานใหม่ → <b>ลดเวลา ลดต้นทุน</b><br>Zero-shot (ใช้ตรงๆ) / Fine-tuning"],
+["l9","Active Learning","<b>โมเดลเลือก</b>ตัวอย่างที่<b>ไม่แน่นอนสูง</b> (ใกล้ decision boundary) ให้มนุษย์ label<br>อีกชื่อ: Query learning"],
+// ---------- Lec 10 ----------
+["l10","Class Imbalance ตัวอย่าง","rare events: fraud 1%, <b>มะเร็ง 2%</b><br>โมเดลจะ <b>bias ไปทาง majority</b>"],
+["l10","ปัญหาของ imbalance 3 ข้อ","1) เรียน minority ไม่พอ<br>2) ทายคลาสใหญ่ตลอดก็ได้ accuracy สูง<br>3) <b>Asymmetric cost</b>: FN แพงกว่า FP"],
+["l10","ทำไม Accuracy ไม่เหมาะ","ถูกครอบงำโดยคลาสใหญ่<br>ทาย \"ปกติ\" ทุกเคส ป่วย 5% → accuracy 95% แต่ recall 0"],
+["l10","FN vs FP","<b>FN</b> = ทาย Negative แต่จริง Positive (miss, Type II)<br><b>FP</b> = ทาย Positive แต่จริง Negative (false alarm, Type I)"],
+["l10","Precision / Recall","Precision = TP / (TP + FP)<br>Recall = Sensitivity = TP / (TP + FN)"],
+["l10","Specificity / F1 / Balanced Acc","Specificity = TN / (TN + FP)<br>F1 = 2PR / (P + R)<br>Balanced Acc = (Sensitivity + Specificity) / 2"],
+["l10","อยากลด FN ใช้ metric ใด","<b>Recall</b> — เช่น ตรวจมะเร็ง<br>(กรองสแปมเน้น Precision)"],
+["l10","Precision สูง Recall ต่ำ","ตรวจเจอ positive <b>น้อย</b> แต่ที่เจอ<b>ส่วนใหญ่ถูก</b>"],
+["l10","ROC vs PR curve","ROC = <b>TPR vs FPR</b><br>imbalance มาก ROC อาจหลอก → ใช้ <b>PR-AUC</b>"],
+["l10","ลด threshold แล้วเกิดอะไร","TPR ↑ และ FPR ↑ (ทายบวกง่ายขึ้น)"],
+["l10","ใช้ P95 แทน Median","median ไม่สะท้อน minority → ดู <b>95th percentile</b><br>ข้อเสีย: <b>ไวต่อ outliers</b>, ไม่เสถียรเมื่อ sample น้อย"],
+["l10","SMOTE","<b>สร้างจุดสังเคราะห์</b>จาก minority<br>x_new = x + λ(x_nb − x), λ ∈ [0, 1]"],
+["l10","Random Oversampling — ข้อเสีย","ทำซ้ำข้อมูล minority → <b>เสี่ยง overfitting</b>"],
+["l10","Undersampling — ข้อเสีย","<b>สูญเสียข้อมูล</b>ที่อาจมีประโยชน์ของ majority"],
+["l10","NearMiss-1 vs OSS","NearMiss-1: <b>เก็บ</b> majority ที่ใกล้ minority<br>OSS (1-NN): <b>ลบ</b> majority ที่ใกล้ minority/ขอบเขต"],
+["l10","Two-phase learning","เฟส 1: <b>undersample</b> แล้ว train<br>เฟส 2: <b>oversample</b> แล้ว fine-tune โมเดลเดิม"],
+["l10","Cost-sensitive learning","<b>ปรับ loss function</b> ให้ error ที่แพงมีน้ำหนักมาก (algorithm-level)"],
+["l10","Deep NN กับ imbalance","รับมือได้ดีกว่า shallow model เพราะ<b>เรียนรู้ feature representation ซับซ้อน</b><br>multi-class โดนกระทบมากกว่า binary"],
+// ---------- Lec 11 ----------
+["l11","MCAR / MAR / NMAR","MCAR: หาย<b>สุ่มสมบูรณ์</b><br>MAR: สัมพันธ์กับข้อมูลที่สังเกตได้<br>NMAR: สัมพันธ์กับ<b>ค่าที่หายไปเอง</b>"],
+["l11","Mean vs Median imputation","ข้อมูลปกติ → <b>mean</b><br>เบ้ / มี outlier → <b>median</b><br>หาย &gt; 5% → variance บิดเบือน"],
+["l11","End value imputation","ใช้กับ NMAR<br>ปกติ: <b>mean ± 3SD</b> · เบ้: Q3 + 1.5·IQR / Q1 − 1.5·IQR"],
+["l11","Arbitrary value imputation","ใช้กับ NMAR · ใส่ 0, 999, −999, −1 หรือ \"Missing\""],
+["l11","ตัวแปรหมวดหมู่หาย","<b>Frequent category (mode)</b> หรือใส่หมวด \"Missing\""],
+["l11","KNN imputation","หา K แถวที่ใกล้สุด (<b>Euclidean/Manhattan</b>) แล้วเฉลี่ยค่า"],
+["l11","Regression imputation","ตัวเลข → <b>linear</b> regression<br>หมวดหมู่ → <b>logistic</b> regression"],
+["l11","Deletion เหมาะเมื่อ","หายน้อย + <b>MCAR</b> · ถ้าไม่ใช่ MCAR อาจเกิด bias"],
+["l11","Z-score outlier","Z = (x − x̄) / σ<br>|Z| &gt; <b>3</b> → outlier"],
+["l11","IQR outlier","IQR = Q3 − Q1<br>บน = Q3 + 1.5·IQR · ล่าง = Q1 − 1.5·IQR"],
+["l11","Winsorization","ค่าที่เกินขอบ → <b>แทนด้วยค่าขอบ</b> (ไม่ลบทิ้ง)<br>Gaussian ใช้ mean ± 3SD · IQR ไม่ต้องสมมติว่าปกติ"],
+["l11","โมเดลที่ไวต่อ outlier","<b>Linear Regression, AdaBoost</b>"],
+["l11","Feature improvement 2 ส่วน","Cleaning: impute missing, treat outliers<br>Augmenting: normalize, discretize, transform, encode"],
+// ---------- Lec 12 ----------
+["l12","Discretization — เป้าหมาย / ผลเสีย","<b>ลดความซับซ้อน เข้าใจง่าย</b> ช่วย Decision Tree, Naïve Bayes<br>ผลเสีย: <b>Information loss</b>"],
+["l12","Equal Width","w = (max − min) / k<br>เหมาะข้อมูล<b>กระจายสม่ำเสมอ</b>"],
+["l12","Equal Frequency","f = m / k ตัวต่อ bin (ต้องเรียงก่อน)<br>ข้อดี: จัดการข้อมูล<b>กระจายไม่สม่ำเสมอ</b>ได้ดี"],
+["l12","K-Means Discretization","ต้องกำหนด<b>จำนวนกลุ่ม K</b><br>ใช้หมายเลขกลุ่มเป็นค่าใหม่"],
+["l12","Chi-Merge","รวม bin ที่ติดกันด้วย <b>Chi-square test</b><br>ต้องกำหนด p-value"],
+["l12","Decision Tree Discretization","ใช้ Gini/Entropy หาจุดแบ่ง<br>เสี่ยง <b>overfitting</b> ถ้าไม่คุมความลึก"],
+["l12","Supervised vs Unsupervised discretization","Unsupervised: Equal width, Equal freq, K-means<br>Supervised (ใช้ target): <b>Chi-Merge, Decision Tree</b>"],
+["l12","Ordinal Encoding","เหมาะข้อมูล<b>มีลำดับ</b> (ต่ำ &lt; กลาง &lt; สูง)<br>ถ้าไม่มีลำดับจริง → โมเดลเข้าใจผิด"],
+["l12","One-hot Encoding","K หมวด → <b>K</b> คอลัมน์ · เหมาะข้อมูลไม่มีลำดับ<br>ปัญหา: <b>หมวดเยอะ</b> → มิติระเบิด"],
+["l12","Dummy Coding","<b>K − 1</b> คอลัมน์ · หมวดฐาน = 0 ทั้งหมด<br>ลด multicollinearity"],
+["l12","Effect Coding","K − 1 คอลัมน์ · หมวดฐาน = <b>−1</b><br>ชายเป็นฐาน: ชาย −1, หญิง 1"],
+["l12","Feature Hashing","ข้อดี: เหมาะ<b>หมวดจำนวนมาก</b><br>ความเสี่ยง: <b>Hash collision</b> · hash % 10 → 0–9"],
+// ---------- Lec 13 ----------
+["l13","Feature Scaling ทำไม","ให้ feature <b>เปรียบเทียบกันได้</b>ในโมเดล"],
+["l13","Standardization","x' = (x − μ) / σ<br>ผล: <b>mean 0, SD 1</b>"],
+["l13","Min-Max Normalization","x' = (x − min) / (max − min) → <b>0 ถึง 1</b><br>outlier ทำให้ข้อมูลส่วนใหญ่<b>ถูกบีบ</b>"],
+["l13","Mean Normalization","x' = (x − <b>mean</b>) / (max − min)<br>≈ −1 ถึง 1 กลางที่ 0"],
+["l13","Maximum Absolute Scaling","x' = x / max|x| → −1 ถึง 1<br><b>รักษาค่า 0 และทิศทาง</b> · outlier กระทบน้อยกว่า Min-Max"],
+["l13","Unit Length (L1 / L2)","x' = x / ‖x‖ → <b>ขนาดเวกเตอร์ = 1</b><br>(3, 4) L2 → (0.6, 0.8) · เหมาะ KNN, SVM"],
+["l13","Log Transformation","เหมาะ<b>เบ้ขวา ค่ามาก</b> (1, 10, 100, 1000 → 0, 1, 2, 3)<br>ใช้ได้เฉพาะค่า<b>บวก</b>"],
+["l13","Reciprocal (1/x)","<b>ใช้กับ 0 ไม่ได้</b> · กลับลำดับค่า<br>1/0.5 = 2"],
+["l13","Square-root","เหมาะข้อมูลที่ <b>variance แปรตามค่าเฉลี่ย</b> · ต้องเป็นบวก"],
+["l13","Box-Cox","(x^λ − 1)/λ · λ = 0 → ln x<br>ข้อมูล<b>บวกเท่านั้น</b> · หา λ ด้วย MLE"],
+["l13","Yeo-Johnson","ขยายจาก Box-Cox → <b>ใช้กับค่าลบและศูนย์ได้</b>"]
+];
 
 </script>
 <script>
@@ -697,19 +816,20 @@ let store={};
 try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){store={}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
 const L="ABCDE";
+function twoTap(b,fn){let armed=false,tm,orig=b.textContent;b.onclick=()=>{if(armed){clearTimeout(tm);fn();return}armed=true;b.textContent="แตะอีกครั้งเพื่อยืนยัน";b.classList.add("armed");tm=setTimeout(()=>{armed=false;b.textContent=orig;b.classList.remove("armed")},3000)}}
 function seeded(seed){let h=7;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;return()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296}}
 function ordFor(key,q){const n=q.o.map((_,i)=>i);if(q.s!=="ex"||q.ns)return n;const r=seeded(key);for(let i=n.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[n[i],n[j]]=[n[j],n[i]]}return n}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const wrapTables=h=>h.replace(/<table>/g,'<div class="tw"><table>').replace(/<\/table>/g,'</table></div>');
 
-const PAGES=[{id:"mock",lec:"สอบข้อกา",title:"สุ่มปรนัยทุกบท"},{id:"write",lec:"สอบข้อเขียน",title:"โจทย์วิธีทำ"},...TOPICS.map(t=>({id:t.id,lec:t.lec,title:t.title})),{id:"home",lec:"ภาพรวม",title:"แนวสอบ + ความคืบหน้า"}];
-let cur=location.hash.slice(1)||"mock";
+const PAGES=[{id:"flash",lec:"แฟลชการ์ด",title:"ท่องจำทีละใบ"},{id:"mock",lec:"สอบข้อกา",title:"สุ่มปรนัยทุกบท"},{id:"write",lec:"สอบข้อเขียน",title:"โจทย์วิธีทำ"},...TOPICS.map(t=>({id:t.id,lec:t.lec,title:t.title})),{id:"home",lec:"ภาพรวม",title:"แนวสอบ + ความคืบหน้า"}];
+let cur=location.hash.slice(1)||"flash";
 if(cur==="calc")cur="write";
-if(!PAGES.find(p=>p.id===cur))cur="mock";
+if(!PAGES.find(p=>p.id===cur))cur="flash";
 const filt={};
 
 function renderTabs(){
-  document.getElementById("tabs").innerHTML=PAGES.map(p=>`<button class="tab${p.id==="mock"||p.id==="write"?" x":""}" role="tab" aria-selected="${p.id===cur}" data-id="${p.id}">${esc(p.lec)}<small>${esc(p.title)}</small></button>`).join("");
+  document.getElementById("tabs").innerHTML=PAGES.map(p=>`<button class="tab${p.id==="flash"||p.id==="mock"||p.id==="write"?" x":""}" role="tab" aria-selected="${p.id===cur}" data-id="${p.id}">${esc(p.lec)}<small>${esc(p.title)}</small></button>`).join("");
   document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go(b.dataset.id));
   const a=document.querySelector('.tab[aria-selected="true"]');if(a)a.scrollIntoView({block:"nearest",inline:"center"});
 }
@@ -760,7 +880,7 @@ function renderTopic(v,t){
   <p class="score">ถูก ${ok} จาก ${n} ข้อที่ทำ</p>
   <div id="qs">${idx.length?idx.map(i=>qCard({...t.quiz[i],cwname:t.cw.replace(" และ ","/")},i+1,s[i],null,t.id+":"+i,ordFor(t.id+":"+i,t.quiz[i]))).join(""):`<p class="empty">${f==="wrong"?"ยังไม่มีข้อที่ผิด":"ไม่มีข้อในหมวดนี้"}</p>`}</div>`;
   v.querySelectorAll(".chip[data-f]").forEach(b=>b.onclick=()=>{filt[t.id]=b.dataset.f;render()});
-  v.querySelector("#rst").onclick=()=>{if(confirm("ล้างคำตอบทั้งหมดของบทนี้?")){store[t.id]={};save();render()}};
+  twoTap(v.querySelector("#rst"),()=>{store[t.id]={};save();render()});
   v.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const[tid,qi]=b.dataset.k.split(":");store[tid][qi]=+b.dataset.o;save();const card=b.closest(".q");const q=t.quiz[qi];card.outerHTML=qCard({...q,cwname:t.cw.replace(" และ ","/")},+qi+1,+b.dataset.o,null,b.dataset.k,ordFor(b.dataset.k,t.quiz[qi]));bindOpts(v,t);updScore(v,t);globalMeter()});
 }
 function bindOpts(v,t){v.querySelectorAll(".opt:not([disabled])").forEach(b=>{if(!b.onclick)b.onclick=()=>{const[tid,qi]=b.dataset.k.split(":");store[tid][qi]=+b.dataset.o;save();b.closest(".q").outerHTML=qCard({...t.quiz[qi],cwname:t.cw.replace(" และ ","/")},+qi+1,+b.dataset.o,null,b.dataset.k,ordFor(b.dataset.k,t.quiz[qi]));bindOpts(v,t);updScore(v,t);globalMeter()}})}
@@ -908,8 +1028,64 @@ function renderWrite(v){
   v.querySelectorAll("[data-re]").forEach(b=>b.onclick=()=>keep(()=>{const i=+b.dataset.re;const k=wset[i].k;wset[i]={k,p:GEN[k](),u:{},chk:false,show:false}}));
 }
 
+/* ===== แฟลชการ์ด ===== */
+let fcDeck="all",fcQ=[],fcI=0,fcFlip=false,fcShuf=true;
+const fcKnown=()=>store.__fc||(store.__fc={});
+function fcBuild(){
+  const k=fcKnown();
+  let ids=FC.map((c,i)=>i).filter(i=>fcDeck==="all"||(fcDeck==="todo"?!k[i]:FC[i][0]===fcDeck));
+  if(fcDeck!=="todo")ids=ids.filter(i=>!k[i]).concat(ids.filter(i=>k[i]));
+  fcQ=fcShuf?shuffle(ids.filter(i=>!k[i])).concat(ids.filter(i=>k[i])):ids;fcI=0;fcFlip=false;
+}
+function fcMark(ok){
+  if(fcI>=fcQ.length)return;
+  const id=fcQ[fcI],k=fcKnown();
+  if(ok){k[id]=1;fcI++}
+  else{delete k[id];const card=fcQ.splice(fcI,1)[0];fcQ.splice(Math.min(fcI+3,fcQ.length),0,card)}
+  save();fcFlip=false;render();
+}
+function renderFlash(v){
+  if(!fcQ.length&&fcI===0)fcBuild();
+  const k=fcKnown(),lecs=[...new Set(FC.map(c=>c[0]))];
+  const inDeck=FC.map((c,i)=>i).filter(i=>fcDeck==="all"||fcDeck==="todo"||FC[i][0]===fcDeck);
+  const known=inDeck.filter(i=>k[i]).length;
+  const ch=(id,l)=>`<button class="chip" aria-pressed="${fcDeck===id}" data-d="${id}">${l}</button>`;
+  let h=`<h2>แฟลชการ์ด</h2><p class="sub">แตะการ์ดเพื่อพลิก ถ้าจำได้กด "จำได้" ถ้ายังไม่ได้กด "ยังไม่จำ" การ์ดจะวนกลับมาอีกในอีก 3 ใบ</p>
+  <div class="filters">${ch("all","ทุกบท")}${ch("todo","ยังไม่จำ")}${lecs.map(l=>ch(l,TOPICS.find(t=>t.id===l).lec)).join("")}</div>
+  <div class="fc-meta"><span>จำได้ ${fcDeck==="todo"?Object.keys(k).length+" / "+FC.length:known+" / "+inDeck.length}</span><div class="bar"><i class="g" style="width:${(fcDeck==="todo"?Object.keys(k).length/FC.length:known/(inDeck.length||1))*100}%"></i></div></div>`;
+  if(fcI>=fcQ.length||!fcQ.length){
+    h+=`<div class="fc-done"><div class="big">${fcQ.length?"ครบรอบแล้ว 🎉":"ไม่มีการ์ดในชุดนี้"}</div><p>${fcQ.length?"เริ่มรอบใหม่ได้ หรือเลือก \"ยังไม่จำ\" เพื่อทวนเฉพาะใบที่ยังไม่แม่น":"ลองเลือกชุดอื่น"}</p><button class="btn" id="fcagain">เริ่มรอบใหม่</button></div>`;
+  }else{
+    const c=FC[fcQ[fcI]],t=TOPICS.find(x=>x.id===c[0]);
+    h+=`<div class="fc-stage"><button class="fc ${fcFlip?"flip":""}" id="fccard" aria-label="พลิกการ์ด">
+      <div class="face front"><span class="fc-tag">${esc(t.lec)} · ${esc(t.title)}${k[fcQ[fcI]]?" · ✓ จำได้แล้ว":""}</span><div class="fc-txt">${c[1]}</div><span class="fc-hint">แตะเพื่อดูคำตอบ</span></div>
+      <div class="face back"><span class="fc-tag">${c[1]}</span><div class="fc-ans">${c[2]}</div></div>
+    </button></div>
+    <div class="fc-count">${fcI+1} / ${fcQ.length}</div>
+    <div class="fc-act"><button class="fcb no" id="fcno">✗ ยังไม่จำ</button><button class="fcb yes" id="fcyes">✓ จำได้</button></div>
+    <div class="fc-nav"><button class="reveal" id="fcprev" ${fcI===0?"disabled":""}>← ก่อนหน้า</button><button class="reveal" id="fcsh">${fcShuf?"สลับลำดับ: เปิด":"สลับลำดับ: ปิด"}</button><button class="reveal" id="fcnext">ข้าม →</button></div>`;
+  }
+  h+=`<p style="margin-top:22px;text-align:center"><button class="chip reset" id="fcreset" style="margin:0">ล้างสถานะ "จำได้" ทั้งหมด</button></p>`;
+  v.innerHTML=h;
+  v.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{fcDeck=b.dataset.d;fcBuild();render()});
+  const $=id=>v.querySelector("#"+id);
+  if($("fcagain"))$("fcagain").onclick=()=>{fcBuild();render()};
+  if($("fccard")){
+    $("fccard").onclick=()=>{fcFlip=!fcFlip;$("fccard").classList.toggle("flip",fcFlip)};
+    $("fcyes").onclick=()=>fcMark(true);$("fcno").onclick=()=>fcMark(false);
+    $("fcprev").onclick=()=>{fcI=Math.max(0,fcI-1);fcFlip=false;render()};
+    $("fcnext").onclick=()=>{fcI++;fcFlip=false;render()};
+    $("fcsh").onclick=()=>{fcShuf=!fcShuf;fcBuild();render()};
+    let sx=null;$("fccard").addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});
+    $("fccard").addEventListener("touchend",e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>60){e.preventDefault();fcMark(dx>0)}});
+  }
+  twoTap($("fcreset"),()=>{store.__fc={};save();fcBuild();render()});
+}
+document.addEventListener("keydown",e=>{if(cur!=="flash"||e.target.matches("input,select"))return;
+  if(e.key===" "){e.preventDefault();const c=document.getElementById("fccard");if(c)c.click()}
+  else if(e.key==="ArrowRight")fcMark(true);else if(e.key==="ArrowLeft")fcMark(false)});
+
 let mock=null;
-const TOTAL_Q=TOPICS.reduce((s,t)=>s+t.quiz.length,0);
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function startMock(n){
   const pool=[];TOPICS.forEach(t=>t.quiz.forEach((q,i)=>pool.push({...q,cwname:t.lec,ref:t.lec})));
@@ -918,8 +1094,7 @@ function startMock(n){
   render();
 }
 function renderMock(v){
-  let h=`<h2>สอบข้อกา</h2><p class="sub">สุ่มข้อจากทุกบท และสลับตำแหน่งตัวเลือก ตอบแล้วเฉลยทันที</p><div class="mockbar">${[[20,"20 ข้อ"],[50,"50 ข้อ"],[95,"95 ข้อ (เท่าสอบจริง)"],[TOTAL_Q,`ทุกข้อ (${TOTAL_Q})`]].map(([n,l])=>`<button class="btn${mock&&mock.n===n?"":" ghost"}" data-n="${n}" aria-pressed="${!!(mock&&mock.n===n)}">${l}</button>`).join("")}</div>
-  <form class="mockbar custom" id="mockc" novalidate><label for="mockn">กำหนดเอง</label><input id="mockn" type="number" inputmode="numeric" min="1" max="${TOTAL_Q}" placeholder="1–${TOTAL_Q}" value="${mock&&![20,50,95,TOTAL_Q].includes(mock.n)?mock.n:""}"><button class="btn" type="submit">สุ่ม</button></form>`;
+  let h=`<h2>สอบข้อกา</h2><p class="sub">สุ่มข้อจากทุกบท และสลับตำแหน่งตัวเลือก ตอบแล้วเฉลยทันที</p><div class="mockbar">${[[20,"สุ่ม 20 ข้อ"],[50,"สุ่ม 50 ข้อ"],[999,"ทุกข้อ"]].map(([n,l])=>`<button class="btn${mock&&mock.n===n?"":" ghost"}" data-n="${n}" aria-pressed="${!!(mock&&mock.n===n)}">${l}</button>`).join("")}</div>`;
   if(mock){
     const ans=mock.qs.filter(x=>x.p!==undefined),ok=ans.filter(x=>x.p===x.q.a).length;
     h+=`<div class="result"><div class="big">${ok}<span style="font-size:1.1rem">/${mock.qs.length}</span></div><div class="rb"><div>ตอบแล้ว ${ans.length} ข้อ${ans.length===mock.qs.length?` · ได้ ${Math.round(ok/mock.qs.length*100)}%`:""}</div><div class="bar"><i class="g" style="width:${ok/mock.qs.length*100}%"></i><i class="r" style="width:${(ans.length-ok)/mock.qs.length*100}%"></i></div></div></div>`;
@@ -927,13 +1102,13 @@ function renderMock(v){
   }
   v.innerHTML=h;
   v.querySelectorAll(".btn[data-n]").forEach(b=>b.onclick=()=>startMock(+b.dataset.n));
-  v.querySelector("#mockc").onsubmit=e=>{e.preventDefault();const n=Math.round(+v.querySelector("#mockn").value);if(n>=1)startMock(Math.min(n,TOTAL_Q))};
   v.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{const i=+b.dataset.k.split(":")[1];mock.qs[i].p=+b.dataset.o;const y=window.scrollY;render();window.scrollTo(0,y)});
 }
 
 function render(){
   const v=document.getElementById("view");
   if(cur==="home")renderHome(v);
+  else if(cur==="flash")renderFlash(v);
   else if(cur==="write")renderWrite(v);
   else if(cur==="mock")renderMock(v);
   else renderTopic(v,TOPICS.find(t=>t.id===cur));
