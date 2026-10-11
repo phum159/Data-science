@@ -917,9 +917,11 @@ function distinctSorted(n,lo,hi){const s=new Set();while(s.size<n)s.add(ri(lo,hi
 const KB=x=>`<kbd>${x}</kbd>`;
 const ENT=KB("enter"),APX=KB("ctrl")+" "+KB("enter");
 const tn=x=>x<0?"⁻"+(-x):String(x);
+const tp=x=>x<0?`(${tn(x)})`:String(x);
 const TI=(e,r,ap)=>`พิมพ์ <code>${e}</code> กด ${ap?APX:ENT} → <b>${r}</b>`;
 const TIL=(d,name)=>`เก็บข้อมูลเป็นตัวแปร: พิมพ์ <code>{${d.map(tn).join(",")}}</code> กด ${KB("ctrl")} ${KB("var")} (sto→) พิมพ์ <code>${name}</code> กด ${ENT}`;
-const TI_ONEVAR=`${KB("menu")} → <b>6 Statistics</b> → <b>1 Stat Calculations</b> → <b>1 One-Variable Statistics</b> → ${ENT} (Num of Lists = 1) → ช่อง X1 List พิมพ์ <code>a</code> → ${ENT}`;
+const TI_ONEVAR=`กด ${KB("menu")} → <b>6 Statistics</b> → <b>1 Stat Calculations</b> → <b>1 One-Variable Statistics</b> → ช่อง Num of Lists = 1 กด ${ENT} → ช่อง X1 List พิมพ์ <code>a</code> → กด ${ENT} จนขึ้นตารางผลลัพธ์`;
+const TIVAR=x=>`กด ${KB("var")} เลือก <code>${x}</code>`;
 
 const GEN={
   z(){
@@ -942,8 +944,8 @@ const GEN={
       q:`ข้อมูล [${shown.join(", ")}]<br>ก) หาค่าเฉลี่ย μ<br>ข) หา σ (หารด้วย n ตามตัวอย่างสไลด์)<br>ค) Standardize ค่า ${x}`,
       f:[{l:"ก) μ",a:mu},{l:"ข) σ",a:sd},{l:`ค) z(${x})`,a:z}],
       s:[`μ = ${sum(d)} / ${n} = ${fm(mu)}`,`ผลต่างกำลังสอง: ${d.map(v=>fm((v-mu)**2)).join(", ")} → รวม ${fm(sum(d.map(v=>(v-mu)**2)))}`,`σ = √(${fm(sum(d.map(v=>(v-mu)**2)))} / ${n}) = ${fm(sd)}`,`z = (${x} − ${fm(mu)}) / ${fm(sd)} = ${fm(z)}`],
-      ti:[TIL(shown,"a"),TI("mean(a)",fm(mu),1),TI("stDevPop(a)",fm(sd),1)+` <span class="tin">(stDevPop = หารด้วย n · stDevSamp = หารด้วย n − 1)</span>`,TI(`(${x}-mean(a))/stDevPop(a)`,fm(z),1),
-        `อีกวิธี: ${TI_ONEVAR} แล้วอ่าน <b>x̄</b> = μ และ <b>σx</b> = σ (ส่วน sx คือแบบ n − 1)`]};
+      ti:[TIL(shown,"a"),TI_ONEVAR,`อ่านจากตาราง: <b>x̄ = ${fm(mu)}</b> (ตอบ ก) และ <b>σx := σₙx = ${fm(sd)}</b> (ตอบ ข) <span class="tin">(ห้ามใช้ sx := sₙ₋₁x เพราะเป็นแบบหาร n − 1)</span>`,
+        `ข้อ ค พิมพ์ <code>(${x}-${fm(mu)})/</code> แล้ว ${TIVAR("stat.σx")} กด ${APX} → <b>${fm(z)}</b> <span class="tin">(ใช้ stat.σx จะไม่มีปัดเศษ)</span>`]};
   },
   norm(){
     const d=distinctSorted(5,-20,40);if(d[0]>=0)d[0]=-ri(4,15);
@@ -954,7 +956,10 @@ const GEN={
       q:`ข้อมูล [${d.join(", ")}]<br>ก) Min-Max Normalization ของ ${a}<br>ข) Mean Normalization ของ ${b}<br>ค) Maximum Absolute Scaling ของ ${c}`,
       f:[{l:`ก) Min-Max(${a})`,a:(a-mn)/rg},{l:`ข) Mean(${b})`,a:(b-mean)/rg},{l:`ค) MaxAbs(${c})`,a:c/ma}],
       s:[`min = ${mn}, max = ${mx}, max − min = ${rg}`,`ก) (${a} − (${mn})) / ${rg} = ${fm((a-mn)/rg)}`,`mean = ${sum(d)} / 5 = ${fm(mean)}`,`ข) (${b} − ${fm(mean)}) / ${rg} = ${fm((b-mean)/rg)}`,`max|x| = ${ma}`,`ค) ${c} / ${ma} = ${fm(c/ma)}`],
-      ti:[TIL(d,"a"),TI(`(${tn(a)}-min(a))/(max(a)-min(a))`,fm((a-mn)/rg),1),TI(`(${tn(b)}-mean(a))/(max(a)-min(a))`,fm((b-mean)/rg),1),TI(`${tn(c)}/max(abs(a))`,fm(c/ma),1)]};
+      ti:[TIL(d,"a"),TI_ONEVAR,`อ่านจากตาราง: <b>MinX = ${fm(mn)}</b>, <b>MaxX = ${mx}</b>, <b>x̄ = ${fm(mean)}</b>`,
+        TI(`(${tn(a)}-${tp(mn)})/(${mx}-${tp(mn)})`,fm((a-mn)/rg),1)+` <span class="tin">(Min-Max)</span>`,
+        TI(`(${tn(b)}-${tp(r2(mean))})/(${mx}-${tp(mn)})`,fm((b-mean)/rg),1)+` <span class="tin">(Mean)</span>`,
+        `max|x| = ค่าที่ไกลจาก 0 ที่สุดระหว่าง |MinX| = ${Math.abs(mn)} กับ |MaxX| = ${Math.abs(mx)} → ${ma} · `+TI(`${tn(c)}/${ma}`,fm(c/ma),1)+` <span class="tin">(Max Abs)</span>`]};
   },
   iqr(){
     let d,q1,q3,iq,up;
@@ -965,7 +970,7 @@ const GEN={
       q:`ข้อมูล (เรียงแล้ว, n = 11): [${d.join(", ")}]<br>ก) Q1 &nbsp; ข) Q3 &nbsp; ค) IQR<br>ง) ขีดจำกัดบน (d = 1.5)<br>จ) ทำ Winsorization แล้ว ${out} จะกลายเป็นเท่าไร`,
       f:[{l:"ก) Q1",a:q1},{l:"ข) Q3",a:q3},{l:"ค) IQR",a:iq},{l:"ง) ขีดบน",a:up},{l:`จ) ค่าใหม่ของ ${out}`,a:up}],
       s:[`ตำแหน่ง Q1 = (n+1)/4 = 3 → Q1 = ${q1}`,`ตำแหน่ง Q3 = 3(n+1)/4 = 9 → Q3 = ${q3}`,`IQR = ${q3} − ${q1} = ${iq}`,`ขีดบน = ${q3} + 1.5(${iq}) = ${fm(up)} · ขีดล่าง = ${q1} − ${fm(1.5*iq)} = ${fm(lo)}`,`${out} &gt; ${fm(up)} → แทนด้วย ${fm(up)}`],
-      ti:[TIL(d,"a"),`${TI_ONEVAR} แล้วเลื่อนลงอ่าน <b>Q₁X = ${q1}</b> และ <b>Q₃X = ${q3}</b>`,TI(`${q3}-${q1}`,iq),TI(`${q3}+1.5*(${q3}-${q1})`,fm(up)),`${out} มากกว่า ${fm(up)} → ตอบ ${fm(up)}`]};
+      ti:[TIL(d,"a"),TI_ONEVAR,`เลื่อนลงอ่าน <b>Q₁X = ${q1}</b> (ตอบ ก) และ <b>Q₃X = ${q3}</b> (ตอบ ข)`,TI(`${q3}-${q1}`,iq),TI(`${q3}+1.5*(${q3}-${q1})`,fm(up)),`${out} มากกว่า ${fm(up)} → ตอบ ${fm(up)}`]};
   },
   gauss(){
     const m=pk([40,50,60,70,100]),s=pk([5,8,10,12,15]);
@@ -1038,6 +1043,7 @@ function renderWrite(v){
   <li><code>⁻5</code> คือเลขติดลบ ให้กดปุ่ม ${KB("(−)")} ไม่ใช่ปุ่มลบ ${KB("−")}</li>
   <li><code>{ }</code> = ${KB("ctrl")} + ปุ่มวงเล็บที่มี { } พิมพ์อยู่ด้านบน · <code>[ ]</code> อยู่ที่ปุ่มวงเล็บอีกตัว</li>
   <li>sto→ (เก็บค่าลงตัวแปร) = ${KB("ctrl")} ${KB("var")} · พิมพ์ชื่อฟังก์ชัน เช่น <code>mean(</code> ด้วยปุ่มตัวอักษรได้เลย ตัวพิมพ์เล็กใหญ่ไม่มีผล</li>
+  <li>หา x̄, σ, Min, Max, Q1, Q3 จากข้อมูลชุดเดียวในครั้งเดียว: ${KB("menu")} → <b>6 Statistics</b> → <b>1 Stat Calculations</b> → <b>1 One-Variable Statistics</b> · ผลลัพธ์ถูกเก็บเป็นตัวแปร <code>stat.…</code> เรียกใช้ต่อได้ด้วยปุ่ม ${KB("var")}</li>
   <li>ใช้สูตรเดิมกับเลขใหม่: กด ${KB("▲")} เลือกบรรทัดเก่า กด ${ENT} จะคัดลอกลงมาให้แก้</li>
   </ol></div></details>`;
   h+=wset.map((it,i)=>{
