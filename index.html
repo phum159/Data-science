@@ -149,6 +149,14 @@ td+td,th+th{border-left:1px solid var(--line)}
 
 /* mock / buttons */
 .mockbar{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+kbd{display:inline-block;font-family:inherit;font-size:.78rem;font-weight:700;line-height:1.3;padding:1px 7px;margin:1px 0;border-radius:6px;background:var(--card);border:1px solid var(--line);border-bottom-width:3px;color:var(--ink);white-space:nowrap}
+.tibox code,.tips code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.86rem;background:var(--p-soft);color:var(--ink);padding:1px 6px;border-radius:6px;word-break:break-all}
+.tibox{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--t) 45%,var(--line));border-radius:14px;padding:10px 12px 4px;background:var(--t-soft)}
+.tibox .tih{font-size:.8rem;font-weight:700;color:var(--t)}
+.tibox .steps{background:transparent;padding:6px 4px 8px 22px;margin:0}
+.tibox .steps li{margin:6px 0}
+.tin{color:var(--muted);font-size:.82rem}
+.tips{margin:6px 0;padding-left:22px}.tips li{margin:6px 0}
 .btn{border:none;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-weight:700;font-size:.95rem;padding:11px 18px;border-radius:14px;cursor:pointer;box-shadow:0 6px 16px color-mix(in srgb,var(--p) 35%,transparent);transition:transform .15s}
 .btn:hover{transform:translateY(-1px)}
 .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
@@ -905,6 +913,14 @@ const fm=x=>{const v=r2(x);return (Object.is(v,-0)?0:v).toString().replace("-","
 const sum=a=>a.reduce((s,x)=>s+x,0);
 function distinctSorted(n,lo,hi){const s=new Set();while(s.size<n)s.add(ri(lo,hi));return [...s].sort((a,b)=>a-b)}
 
+/* วิธีกด TI-Nspire CX II */
+const KB=x=>`<kbd>${x}</kbd>`;
+const ENT=KB("enter"),APX=KB("ctrl")+" "+KB("enter");
+const tn=x=>x<0?"⁻"+(-x):String(x);
+const TI=(e,r,ap)=>`พิมพ์ <code>${e}</code> กด ${ap?APX:ENT} → <b>${r}</b>`;
+const TIL=(d,name)=>`เก็บข้อมูลเป็นตัวแปร: พิมพ์ <code>{${d.map(tn).join(",")}}</code> กด ${KB("ctrl")} ${KB("var")} (sto→) พิมพ์ <code>${name}</code> กด ${ENT}`;
+const TI_ONEVAR=`${KB("menu")} → <b>6 Statistics</b> → <b>1 Stat Calculations</b> → <b>1 One-Variable Statistics</b> → ${ENT} (Num of Lists = 1) → ช่อง X1 List พิมพ์ <code>a</code> → ${ENT}`;
+
 const GEN={
   z(){
     const m=pk([50,60,65,70,75,80]),s=pk([4,6,8,10,12]);
@@ -915,7 +931,8 @@ const GEN={
     return {t:"Z-score และ outlier",
       q:`คะแนนสอบมีค่าเฉลี่ย μ = ${m} และส่วนเบี่ยงเบนมาตรฐาน σ = ${s}<br>ก) หา Z-score ของ x₁ = ${A.x}<br>ข) หา Z-score ของ x₂ = ${B.x}<br>ค) ค่าใดเป็น outlier (เกณฑ์ |Z| &gt; 3)`,
       f:[{l:"ก) Z(x₁)",a:A.z},{l:"ข) Z(x₂)",a:B.z},{l:"ค) outlier",c:["x₁","x₂","ทั้งคู่","ไม่มี"],a:ans}],
-      s:[`Z(x₁) = (${A.x} − ${m}) / ${s} = ${fm(A.z)}`,`Z(x₂) = (${B.x} − ${m}) / ${s} = ${fm(B.z)}`,`|${fm(A.out?A.z:B.z)}| &gt; 3 → ${A.out?"x₁":"x₂"} เป็น outlier ส่วนอีกค่า |Z| ≤ 3 ไม่เป็น`]};
+      s:[`Z(x₁) = (${A.x} − ${m}) / ${s} = ${fm(A.z)}`,`Z(x₂) = (${B.x} − ${m}) / ${s} = ${fm(B.z)}`,`|${fm(A.out?A.z:B.z)}| &gt; 3 → ${A.out?"x₁":"x₂"} เป็น outlier ส่วนอีกค่า |Z| ≤ 3 ไม่เป็น`],
+      ti:[TI(`(${A.x}-${m})/${s}`,fm(A.z)),TI(`(${B.x}-${m})/${s}`,fm(B.z)),`ดูค่าที่ได้: ถ้าเกิน 3 หรือต่ำกว่า −3 คือ outlier`]};
   },
   std(){
     const n=5,d=distinctSorted(n,10,60),mu=sum(d)/n,sd=Math.sqrt(sum(d.map(x=>(x-mu)**2))/n);
@@ -924,7 +941,9 @@ const GEN={
     return {t:"Standardization",
       q:`ข้อมูล [${shown.join(", ")}]<br>ก) หาค่าเฉลี่ย μ<br>ข) หา σ (หารด้วย n ตามตัวอย่างสไลด์)<br>ค) Standardize ค่า ${x}`,
       f:[{l:"ก) μ",a:mu},{l:"ข) σ",a:sd},{l:`ค) z(${x})`,a:z}],
-      s:[`μ = ${sum(d)} / ${n} = ${fm(mu)}`,`ผลต่างกำลังสอง: ${d.map(v=>fm((v-mu)**2)).join(", ")} → รวม ${fm(sum(d.map(v=>(v-mu)**2)))}`,`σ = √(${fm(sum(d.map(v=>(v-mu)**2)))} / ${n}) = ${fm(sd)}`,`z = (${x} − ${fm(mu)}) / ${fm(sd)} = ${fm(z)}`]};
+      s:[`μ = ${sum(d)} / ${n} = ${fm(mu)}`,`ผลต่างกำลังสอง: ${d.map(v=>fm((v-mu)**2)).join(", ")} → รวม ${fm(sum(d.map(v=>(v-mu)**2)))}`,`σ = √(${fm(sum(d.map(v=>(v-mu)**2)))} / ${n}) = ${fm(sd)}`,`z = (${x} − ${fm(mu)}) / ${fm(sd)} = ${fm(z)}`],
+      ti:[TIL(shown,"a"),TI("mean(a)",fm(mu),1),TI("stDevPop(a)",fm(sd),1)+` <span class="tin">(stDevPop = หารด้วย n · stDevSamp = หารด้วย n − 1)</span>`,TI(`(${x}-mean(a))/stDevPop(a)`,fm(z),1),
+        `อีกวิธี: ${TI_ONEVAR} แล้วอ่าน <b>x̄</b> = μ และ <b>σx</b> = σ (ส่วน sx คือแบบ n − 1)`]};
   },
   norm(){
     const d=distinctSorted(5,-20,40);if(d[0]>=0)d[0]=-ri(4,15);
@@ -934,7 +953,8 @@ const GEN={
     return {t:"Normalization 3 แบบ",
       q:`ข้อมูล [${d.join(", ")}]<br>ก) Min-Max Normalization ของ ${a}<br>ข) Mean Normalization ของ ${b}<br>ค) Maximum Absolute Scaling ของ ${c}`,
       f:[{l:`ก) Min-Max(${a})`,a:(a-mn)/rg},{l:`ข) Mean(${b})`,a:(b-mean)/rg},{l:`ค) MaxAbs(${c})`,a:c/ma}],
-      s:[`min = ${mn}, max = ${mx}, max − min = ${rg}`,`ก) (${a} − (${mn})) / ${rg} = ${fm((a-mn)/rg)}`,`mean = ${sum(d)} / 5 = ${fm(mean)}`,`ข) (${b} − ${fm(mean)}) / ${rg} = ${fm((b-mean)/rg)}`,`max|x| = ${ma}`,`ค) ${c} / ${ma} = ${fm(c/ma)}`]};
+      s:[`min = ${mn}, max = ${mx}, max − min = ${rg}`,`ก) (${a} − (${mn})) / ${rg} = ${fm((a-mn)/rg)}`,`mean = ${sum(d)} / 5 = ${fm(mean)}`,`ข) (${b} − ${fm(mean)}) / ${rg} = ${fm((b-mean)/rg)}`,`max|x| = ${ma}`,`ค) ${c} / ${ma} = ${fm(c/ma)}`],
+      ti:[TIL(d,"a"),TI(`(${tn(a)}-min(a))/(max(a)-min(a))`,fm((a-mn)/rg),1),TI(`(${tn(b)}-mean(a))/(max(a)-min(a))`,fm((b-mean)/rg),1),TI(`${tn(c)}/max(abs(a))`,fm(c/ma),1)]};
   },
   iqr(){
     let d,q1,q3,iq,up;
@@ -944,7 +964,8 @@ const GEN={
     return {t:"IQR และ Winsorization",
       q:`ข้อมูล (เรียงแล้ว, n = 11): [${d.join(", ")}]<br>ก) Q1 &nbsp; ข) Q3 &nbsp; ค) IQR<br>ง) ขีดจำกัดบน (d = 1.5)<br>จ) ทำ Winsorization แล้ว ${out} จะกลายเป็นเท่าไร`,
       f:[{l:"ก) Q1",a:q1},{l:"ข) Q3",a:q3},{l:"ค) IQR",a:iq},{l:"ง) ขีดบน",a:up},{l:`จ) ค่าใหม่ของ ${out}`,a:up}],
-      s:[`ตำแหน่ง Q1 = (n+1)/4 = 3 → Q1 = ${q1}`,`ตำแหน่ง Q3 = 3(n+1)/4 = 9 → Q3 = ${q3}`,`IQR = ${q3} − ${q1} = ${iq}`,`ขีดบน = ${q3} + 1.5(${iq}) = ${fm(up)} · ขีดล่าง = ${q1} − ${fm(1.5*iq)} = ${fm(lo)}`,`${out} &gt; ${fm(up)} → แทนด้วย ${fm(up)}`]};
+      s:[`ตำแหน่ง Q1 = (n+1)/4 = 3 → Q1 = ${q1}`,`ตำแหน่ง Q3 = 3(n+1)/4 = 9 → Q3 = ${q3}`,`IQR = ${q3} − ${q1} = ${iq}`,`ขีดบน = ${q3} + 1.5(${iq}) = ${fm(up)} · ขีดล่าง = ${q1} − ${fm(1.5*iq)} = ${fm(lo)}`,`${out} &gt; ${fm(up)} → แทนด้วย ${fm(up)}`],
+      ti:[TIL(d,"a"),`${TI_ONEVAR} แล้วเลื่อนลงอ่าน <b>Q₁X = ${q1}</b> และ <b>Q₃X = ${q3}</b>`,TI(`${q3}-${q1}`,iq),TI(`${q3}+1.5*(${q3}-${q1})`,fm(up)),`${out} มากกว่า ${fm(up)} → ตอบ ${fm(up)}`]};
   },
   gauss(){
     const m=pk([40,50,60,70,100]),s=pk([5,8,10,12,15]);
@@ -952,7 +973,8 @@ const GEN={
     return {t:"Winsorization แบบ Gaussian",
       q:`ข้อมูลมีค่าเฉลี่ย ${m} และ SD = ${s} ใช้ขอบเขต mean ± 3SD<br>ก) ขีดจำกัดบน &nbsp; ข) ขีดจำกัดล่าง<br>ค) ค่าใหม่ของ ${hi} &nbsp; ง) ค่าใหม่ของ ${lo} &nbsp; จ) ค่าใหม่ของ ${mid}`,
       f:[{l:"ก) ขีดบน",a:m+3*s},{l:"ข) ขีดล่าง",a:m-3*s},{l:`ค) ${hi} →`,a:m+3*s},{l:`ง) ${lo} →`,a:m-3*s},{l:`จ) ${mid} →`,a:mid}],
-      s:[`ขีดบน = ${m} + 3(${s}) = ${m+3*s}`,`ขีดล่าง = ${m} − 3(${s}) = ${m-3*s}`,`${hi} เกินขีดบน → ${m+3*s}`,`${lo} ต่ำกว่าขีดล่าง → ${m-3*s}`,`${mid} อยู่ในช่วง → คงเดิม`]};
+      s:[`ขีดบน = ${m} + 3(${s}) = ${m+3*s}`,`ขีดล่าง = ${m} − 3(${s}) = ${m-3*s}`,`${hi} เกินขีดบน → ${m+3*s}`,`${lo} ต่ำกว่าขีดล่าง → ${m-3*s}`,`${mid} อยู่ในช่วง → คงเดิม`],
+      ti:[TI(`${m}+3*${s}`,m+3*s),TI(`${m}-3*${s}`,m-3*s),`เทียบค่าแต่ละตัวกับขีดบน/ล่าง ไม่ต้องกดเพิ่ม`]};
   },
   lnorm(){
     const v=pk([[3,4],[6,8],[5,12],[8,15],[1,2,2],[2,3,6],[4,4,7],[9,12]]);
@@ -960,7 +982,9 @@ const GEN={
     return {t:"Normalize to Unit Length",
       q:`เวกเตอร์ X = (${v.join(", ")})<br>ก) L2 norm &nbsp; ข) องค์ประกอบแรกหลัง L2 normalize<br>ค) L1 norm &nbsp; ง) องค์ประกอบสุดท้ายหลัง L1 normalize`,
       f:[{l:"ก) ‖X‖₂",a:l2},{l:"ข) x₁ / ‖X‖₂",a:v[0]/l2},{l:"ค) ‖X‖₁",a:l1},{l:"ง) xₙ / ‖X‖₁",a:v[v.length-1]/l1}],
-      s:[`L2 = √(${v.map(x=>x+"²").join(" + ")}) = √${sum(v.map(x=>x*x))} = ${fm(l2)}`,`L2 normalize = (${v.map(x=>fm(x/l2)).join(", ")})`,`L1 = ${v.join(" + ")} = ${l1}`,`L1 normalize = (${v.map(x=>fm(x/l1)).join(", ")})`]};
+      s:[`L2 = √(${v.map(x=>x+"²").join(" + ")}) = √${sum(v.map(x=>x*x))} = ${fm(l2)}`,`L2 normalize = (${v.map(x=>fm(x/l2)).join(", ")})`,`L1 = ${v.join(" + ")} = ${l1}`,`L1 normalize = (${v.map(x=>fm(x/l1)).join(", ")})`],
+      ti:[TI(`√(${v.map(x=>x+"²").join("+")})`,fm(l2),1),TI(`${v[0]}/√(${v.map(x=>x+"²").join("+")})`,fm(v[0]/l2),1),TI(v.join("+"),l1),TI(`${v[v.length-1]}/${l1}`,fm(v[v.length-1]/l1),1),
+        `ทางลัด: <code>norm([${v.join(",")}])</code> ได้ L2 และ <code>unitV([${v.join(",")}])</code> ได้เวกเตอร์ L2 normalize ทั้งชุด`]};
   },
   conf(){
     const tp=ri(20,90),fn=ri(5,40),fp=ri(5,40),tn=ri(100,600),N=tp+fn+fp+tn;
@@ -968,7 +992,9 @@ const GEN={
     return {t:"Confusion Matrix",
       q:`TP = ${tp}, FN = ${fn}, FP = ${fp}, TN = ${tn}<br>หา Accuracy, Precision, Recall และ F1 (ทศนิยม 2 ตำแหน่ง)`,
       f:[{l:"Accuracy",a:(tp+tn)/N},{l:"Precision",a:P},{l:"Recall",a:R},{l:"F1",a:F}],
-      s:[`N = ${N} → Accuracy = (${tp} + ${tn}) / ${N} = ${fm((tp+tn)/N)}`,`Precision = ${tp} / (${tp} + ${fp}) = ${fm(P)}`,`Recall = ${tp} / (${tp} + ${fn}) = ${fm(R)}`,`F1 = 2(${fm(P)})(${fm(R)}) / (${fm(P)} + ${fm(R)}) = ${fm(F)}`]};
+      s:[`N = ${N} → Accuracy = (${tp} + ${tn}) / ${N} = ${fm((tp+tn)/N)}`,`Precision = ${tp} / (${tp} + ${fp}) = ${fm(P)}`,`Recall = ${tp} / (${tp} + ${fn}) = ${fm(R)}`,`F1 = 2(${fm(P)})(${fm(R)}) / (${fm(P)} + ${fm(R)}) = ${fm(F)}`],
+      ti:[TI(`(${tp}+${tn})/(${tp}+${fn}+${fp}+${tn})`,fm((tp+tn)/N),1),TI(`${tp}/(${tp}+${fp})`,fm(P),1),TI(`${tp}/(${tp}+${fn})`,fm(R),1),
+        TI(`2*${tp}/(2*${tp}+${fp}+${fn})`,fm(F),1)+` <span class="tin">(สูตรเดียวกับ 2PR/(P+R) แต่กดสั้นกว่าและไม่มีปัดเศษสะสม)</span>`]};
   },
   smote(){
     const A=[ri(0,6),ri(0,6)],B=[ri(2,10),ri(0,10)],l=pk([0.2,0.25,0.4,0.5,0.6,0.75]);
@@ -976,7 +1002,8 @@ const GEN={
     return {t:"SMOTE",
       q:`จุด minority A = (${A}) เพื่อนบ้านใกล้สุด B = (${B}) สุ่มได้ λ = ${l}<br>หาพิกัดจุดใหม่ (x, y)`,
       f:[{l:"x ใหม่",a:x},{l:"y ใหม่",a:y}],
-      s:[`x = ${A[0]} + ${l}(${B[0]} − ${A[0]}) = ${fm(x)}`,`y = ${A[1]} + ${l}(${B[1]} − ${A[1]}) = ${fm(y)}`]};
+      s:[`x = ${A[0]} + ${l}(${B[0]} − ${A[0]}) = ${fm(x)}`,`y = ${A[1]} + ${l}(${B[1]} − ${A[1]}) = ${fm(y)}`],
+      ti:[TI(`${A[0]}+${l}*(${B[0]}-${A[0]})`,fm(x),1),TI(`${A[1]}+${l}*(${B[1]}-${A[1]})`,fm(y),1)]};
   },
   ew(){
     const k=pk([3,4,5]),w=pk([5,8,10,12,15,20]),mn=pk([0,5,10,20]),mx=mn+k*w;let val=ri(mn+1,mx-1);while((val-mn)%w===0)val=ri(mn+1,mx-1);
@@ -985,7 +1012,8 @@ const GEN={
     return {t:"Equal Width / Frequency",
       q:`ข้อมูลมีค่าต่ำสุด ${mn} สูงสุด ${mx} จำนวน ${m} ตัวอย่าง แบ่ง ${k} bin<br>ก) ความกว้าง bin แบบ Equal Width<br>ข) ค่า ${val} อยู่ bin ที่เท่าไร (Equal Width)<br>ค) แบบ Equal Frequency แต่ละ bin มีกี่ตัวอย่าง`,
       f:[{l:"ก) w",a:w},{l:"ข) bin ที่",a:bin},{l:"ค) f",a:m/k}],
-      s:[`w = (${mx} − ${mn}) / ${k} = ${w}`,`ขอบ: ${Array.from({length:k},(_,i)=>`[${mn+i*w}, ${mn+(i+1)*w}]`).join(", ")}`,`${val} อยู่ bin ที่ ${bin}`,`f = ${m} / ${k} = ${m/k}`]};
+      s:[`w = (${mx} − ${mn}) / ${k} = ${w}`,`ขอบ: ${Array.from({length:k},(_,i)=>`[${mn+i*w}, ${mn+(i+1)*w}]`).join(", ")}`,`${val} อยู่ bin ที่ ${bin}`,`f = ${m} / ${k} = ${m/k}`],
+      ti:[TI(`(${mx}-${mn})/${k}`,w),TI(`floor((${val}-${mn})/${w})+1`,bin)+` <span class="tin">(floor = ปัดลง)</span>`,TI(`${m}/${k}`,m/k)]};
   }
 };
 const GEN_TEACHER=["z","std","norm","iqr","gauss"],GEN_ALL=Object.keys(GEN);
@@ -994,7 +1022,7 @@ let wset=null,wmode="teacher";
 function newSet(){
   const pool=wmode==="teacher"?GEN_TEACHER:wmode==="all"?GEN_ALL:[wmode];
   const keys=pool.length>=3?shuffle(pool).slice(0,3):[pool[0],pool[0],pool[0]];
-  wset=keys.map(k=>({k,p:GEN[k](),u:{},chk:false,show:false}));
+  wset=keys.map(k=>({k,p:GEN[k](),u:{},chk:false,show:false,ti:false}));
 }
 function okNum(u,a){const s=String(u).trim().replace("−","-").replace(",",".");if(s==="")return false;let v=Number(s);if(s.includes("/")){const[x,y]=s.split("/");v=Number(x)/Number(y)}if(!isFinite(v))return false;return Math.abs(v-a)<=Math.max(0.011,Math.abs(a)*0.005)}
 function renderWrite(v){
@@ -1002,7 +1030,16 @@ function renderWrite(v){
   const mc=(k,lab)=>`<button class="chip" aria-pressed="${wmode===k}" data-m="${k}">${lab}</button>`;
   let h=`<h2>สอบข้อเขียน</h2><p class="sub">สุ่มโจทย์ 3 ข้อแบบในห้องสอบ ตัวเลขเปลี่ยนทุกครั้ง พิมพ์คำตอบ (ทศนิยม 2 ตำแหน่ง หรือเศษส่วนอย่าง 2/3) แล้วกดตรวจ</p>
   <div class="filters">${mc("teacher","เรื่องที่อาจารย์บอก")}${mc("all","ทุกเรื่อง")}${GEN_ALL.map(k=>mc(k,GEN_NAME[k])).join("")}</div>
-  <div class="mockbar"><button class="btn" id="newset">สุ่มชุดใหม่</button></div>`;
+  <div class="mockbar"><button class="btn" id="newset">สุ่มชุดใหม่</button></div>
+  <details class="sum"><summary>พื้นฐานการกด TI-Nspire CX II</summary><div class="sumbody"><ol class="tips">
+  <li>เปิดหน้าคิดเลข: กด ${KB("⌂ on")} แล้วกด ${KB("A")} (Calculate) หรือใน Document เลือก Add Calculator</li>
+  <li>ได้คำตอบเป็นเศษส่วน (เช่น 2/3) ให้กด ${APX} แทน ${ENT} จะได้ทศนิยม</li>
+  <li><code>/</code> = ปุ่ม ${KB("÷")} · <code>*</code> = ปุ่ม ${KB("×")} · <code>²</code> = ปุ่ม ${KB("x²")} · <code>√</code> = ${KB("ctrl")} ${KB("x²")}</li>
+  <li><code>⁻5</code> คือเลขติดลบ ให้กดปุ่ม ${KB("(−)")} ไม่ใช่ปุ่มลบ ${KB("−")}</li>
+  <li><code>{ }</code> = ${KB("ctrl")} + ปุ่มวงเล็บที่มี { } พิมพ์อยู่ด้านบน · <code>[ ]</code> อยู่ที่ปุ่มวงเล็บอีกตัว</li>
+  <li>sto→ (เก็บค่าลงตัวแปร) = ${KB("ctrl")} ${KB("var")} · พิมพ์ชื่อฟังก์ชัน เช่น <code>mean(</code> ด้วยปุ่มตัวอักษรได้เลย ตัวพิมพ์เล็กใหญ่ไม่มีผล</li>
+  <li>ใช้สูตรเดิมกับเลขใหม่: กด ${KB("▲")} เลือกบรรทัดเก่า กด ${ENT} จะคัดลอกลงมาให้แก้</li>
+  </ol></div></details>`;
   h+=wset.map((it,i)=>{
     const p=it.p;
     const fields=p.f.map((f,j)=>{
@@ -1014,8 +1051,9 @@ function renderWrite(v){
     const nOk=it.chk?p.f.filter((f,j)=>f.c?(+it.u[j]===f.a&&it.u[j]!==""&&it.u[j]!==undefined):okNum(it.u[j]??"",f.a)).length:0;
     return `<section class="calc"><h3>ข้อ ${i+1} · ${p.t}${it.chk?` <span class="badge ${nOk===p.f.length?"cw":"ex"}">ถูก ${nOk}/${p.f.length}</span>`:""}</h3>
     <p class="ex-q">${p.q}</p><div class="flds">${fields}</div>
-    <div class="mockbar" style="margin:10px 0 0"><button class="reveal" data-chk="${i}">ตรวจคำตอบ</button><button class="reveal" data-sh="${i}">${it.show?"ซ่อนวิธีทำ":"ดูวิธีทำ"}</button><button class="reveal" data-re="${i}">โจทย์ใหม่ข้อนี้</button></div>
-    ${it.show?`<ol class="steps">${p.s.map(x=>`<li>${x}</li>`).join("")}</ol>`:""}</section>`}).join("");
+    <div class="mockbar" style="margin:10px 0 0"><button class="reveal" data-chk="${i}">ตรวจคำตอบ</button><button class="reveal" data-sh="${i}">${it.show?"ซ่อนวิธีทำ":"ดูวิธีทำ"}</button><button class="reveal" data-ti="${i}">${it.ti?"ซ่อนวิธีกด":"กดเครื่องคิดเลข"}</button><button class="reveal" data-re="${i}">โจทย์ใหม่ข้อนี้</button></div>
+    ${it.show?`<ol class="steps">${p.s.map(x=>`<li>${x}</li>`).join("")}</ol>`:""}
+    ${it.ti?`<div class="tibox"><div class="tih">TI-Nspire CX II · หน้า Calculator</div><ol class="steps">${p.ti.map(x=>`<li>${x}</li>`).join("")}</ol></div>`:""}</section>`}).join("");
   h+=`<details class="sum" style="margin-top:28px"><summary>สูตรและตัวอย่างทุกเรื่อง</summary><div class="sumbody" id="calcref"></div></details>`;
   v.innerHTML=h;
   renderCalcRef(v.querySelector("#calcref"));
@@ -1025,7 +1063,8 @@ function renderWrite(v){
   const keep=fn=>{const y=window.scrollY;fn();render();window.scrollTo(0,y)};
   v.querySelectorAll("[data-chk]").forEach(b=>b.onclick=()=>keep(()=>{wset[+b.dataset.chk].chk=true}));
   v.querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>keep(()=>{const it=wset[+b.dataset.sh];it.show=!it.show}));
-  v.querySelectorAll("[data-re]").forEach(b=>b.onclick=()=>keep(()=>{const i=+b.dataset.re;const k=wset[i].k;wset[i]={k,p:GEN[k](),u:{},chk:false,show:false}}));
+  v.querySelectorAll("[data-ti]").forEach(b=>b.onclick=()=>keep(()=>{const it=wset[+b.dataset.ti];it.ti=!it.ti}));
+  v.querySelectorAll("[data-re]").forEach(b=>b.onclick=()=>keep(()=>{const i=+b.dataset.re;const k=wset[i].k;wset[i]={k,p:GEN[k](),u:{},chk:false,show:false,ti:false}}));
 }
 
 /* ===== แฟลชการ์ด ===== */
